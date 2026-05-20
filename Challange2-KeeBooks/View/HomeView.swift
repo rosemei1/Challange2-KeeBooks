@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct HomeView: View {
+    
+    @State private var isPresented: Bool = false
+    
     var body: some View {
         GeometryReader { proxy in
             ScrollView {
@@ -115,6 +118,7 @@ struct HomeView: View {
                                     .fontDesign(.rounded)
                                 
                                 Button {
+                                    isPresented = !isPresented
                                 } label: {
                                     Text("Change Time")
                                         .fontDesign(.rounded)
@@ -181,6 +185,19 @@ struct HomeView: View {
                 }
             }
             .ignoresSafeArea(edges: [.top, .leading, .trailing])
+            .sheet(isPresented: $isPresented) {
+                SettingTimeView()
+                
+                    .background(.ultraThinMaterial)
+                    .presentationBackground(.ultraThinMaterial)
+                    .presentationCornerRadius(40)
+                
+                
+            }
+            
+            
+            
+            
         }
     }
 }

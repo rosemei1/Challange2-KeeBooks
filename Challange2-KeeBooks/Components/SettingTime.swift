@@ -10,35 +10,51 @@ import SwiftUI
 struct SettingTime: View {
     
     @State private var selectedNotification = 15
+    
     let notifications: [Int] = [15, 30, 45, 60]
     
     var body: some View {
-        Form {
-            Section {
-                Text("Sleep Time")
-                    .font(.title3)
-                    .bold()
-                
-                DatePicker("", selection: .constant(Date()), displayedComponents: .hourAndMinute).datePickerStyle(.wheel)
-                
-                Spacer()
-                
-                Picker("Notify to pickup phone", selection: $selectedNotification) {
-                    ForEach(notifications, id: \.self) { notification in
-                        Text("\(notification) minutes before")
-                        
-                    }
-                }
-                .pickerStyle(.inline)
-            }
-
-        }
-        .scrollContentBackground(.hidden)
-        .background(.ultraThinMaterial)
         
+        ZStack {
+                        
+            Color.clear
+            
+            Form {
+                
+                Section {
+                    
+                    Text("Sleep Time")
+                        .font(.title3)
+                        .bold()
+                    
+                    DatePicker(
+                        "",
+                        selection: .constant(Date()),
+                        displayedComponents: .hourAndMinute
+                    )
+                    .datePickerStyle(.wheel)
+                    
+                    Picker(
+                        selection: $selectedNotification
+                    ) {
+                        
+                        ForEach(notifications, id: \.self) { notification in
+                            
+                            Text("\(notification) minutes before")
+                        }
+                    } label : {
+                        Text("Notify to pickup phone")
+                            .font(.title3)
+                            .bold()
+                    }
+                    .pickerStyle(.inline)
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(.clear)
+        }
     }
 }
-
 
 #Preview {
     SettingTime()
