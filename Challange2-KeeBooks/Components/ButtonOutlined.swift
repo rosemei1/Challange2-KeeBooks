@@ -19,10 +19,7 @@ struct ButtonOutlined: View {
         }
         .foregroundStyle(.primary9)
         .frame(width: 150, height: 35)
-        .background(Color.clear)
         .overlay(RoundedRectangle(cornerRadius: 30).stroke( .primary9, lineWidth: 2))
-        .scaleEffect(0.98)
-        .padding()
 
     }
 }
