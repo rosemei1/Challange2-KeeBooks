@@ -11,6 +11,8 @@ import SwiftData
 @Model
 class Books: Identifiable {
     var title: String
+    var cover: String
+    var audio: String
     var author: String
     var narrator: String
     var synopsis: String
@@ -18,8 +20,10 @@ class Books: Identifiable {
     var status: String
     var bookmark: Int? = nil
     
-    init(title: String, author: String, narrator: String, synopsis: String, duration: Int, status: String, bookmark: Int? = nil) {
+    init(title: String, cover: String, audio: String, author: String, narrator: String, synopsis: String, duration: Int, status: String, bookmark: Int? = nil) {
         self.title = title
+        self.cover = cover
+        self.audio = audio
         self.author = author
         self.narrator = narrator
         self.synopsis = synopsis
