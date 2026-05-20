@@ -34,17 +34,6 @@ andi/login-error
 budi/update-readme
 ```
 
-Branch type examples:
-
-| Type | Description |
-|---|---|
-| feat | New feature |
-| fix | Bug fix |
-| docs | Documentation |
-| refactor | Code restructuring |
-| test | Testing |
-| chore | Maintenance |
-
 ---
 
 # Important Team Habits
