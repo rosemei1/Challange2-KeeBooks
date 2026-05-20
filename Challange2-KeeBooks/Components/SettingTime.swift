@@ -14,22 +14,31 @@ struct SettingTime: View {
     
     var body: some View {
         Form {
-            Text("Sleep Time")
-                .font(.title3)
-                .bold()
-            
-            DatePicker("", selection: .constant(Date()), displayedComponents: .hourAndMinute).datePickerStyle(.wheel)
-            
-            Picker("Notify to pickup phone", selection: $selectedNotification) {
-                ForEach(notifications, id: \.self) { notification in
-                    Text("\(notification) minutes before")
+            Section {
+                Text("Sleep Time")
+                    .font(.title3)
+                    .bold()
                 
+                DatePicker("", selection: .constant(Date()), displayedComponents: .hourAndMinute).datePickerStyle(.wheel)
+                
+                Spacer()
+                
+                Picker("Notify to pickup phone", selection: $selectedNotification) {
+                    ForEach(notifications, id: \.self) { notification in
+                        Text("\(notification) minutes before")
+                        
+                    }
                 }
+                .pickerStyle(.inline)
             }
-            .pickerStyle(.inline)
+
         }
+        .scrollContentBackground(.hidden)
+        .background(.ultraThinMaterial)
+        
     }
 }
+
 
 #Preview {
     SettingTime()
