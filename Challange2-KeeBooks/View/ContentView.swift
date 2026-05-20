@@ -6,34 +6,31 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query private var books: [Books]
+
     var body: some View {
-        
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-            
-            
-            TabView {
-                Tab("Home", systemImage: "house.fill") {
-                    
-                }
-                
-                Tab("Library", systemImage: "books.vertical.fill") {
-                    
-                }
-                
-                Tab("Activity", systemImage: "clock.fill") {
-                    
-                }
-                
+        TabView {
+            Tab("Home", systemImage: "house.fill") {
+              
+            }
+
+            Tab("Library", systemImage: "books.vertical.fill") {
+
+            }
+
+            Tab("Activity", systemImage: "clock.fill") {
+
             }
         }
+    
     }
 }
+
 #Preview {
     ContentView()
+        .modelContainer(for: Books.self, inMemory: true)
 }

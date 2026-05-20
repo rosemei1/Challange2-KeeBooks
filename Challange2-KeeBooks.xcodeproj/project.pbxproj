@@ -267,7 +267,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Challange2-KeeBooks/Challange2-KeeBooks.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 46PB5JVBMV;
+				DEVELOPMENT_TEAM = 828B5GGY6S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Challange2-KeeBooks/Info.plist";
@@ -302,7 +302,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Challange2-KeeBooks/Challange2-KeeBooks.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 46PB5JVBMV;
+				DEVELOPMENT_TEAM = 828B5GGY6S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Challange2-KeeBooks/Info.plist";
