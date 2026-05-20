@@ -23,15 +23,15 @@ This repository uses a collaborative Git workflow to keep development organized,
 Use branch names with this format:
 
 ```txt
-name/type:short-description
+name/short-description
 ```
 
 Examples:
 
 ```txt
-fuad/feat:add-map
-andi/fix:login-error
-budi/docs:update-readme
+fuad/add-map
+andi/login-error
+budi/update-readme
 ```
 
 Branch type examples:
@@ -83,7 +83,7 @@ git pull origin development
 Then create your branch:
 
 ```bash
-git checkout -b fuad/feat:add-map
+git checkout -b fuad/add-map
 ```
 
 ---
@@ -102,7 +102,7 @@ git pull origin development
 ## 2. Create New Branch
 
 ```bash
-git checkout -b fuad/feat:add-map
+git checkout -b fuad/add-map
 ```
 
 ---
@@ -261,7 +261,7 @@ Merge to development
 ```bash
 git checkout development
 git pull origin development
-git checkout -b fuad/feat:add-map
+git checkout -b fuad/add-map
 ```
 
 ---
@@ -278,7 +278,7 @@ git commit -m "feat(map): add interactive map"
 ## Push Branch
 
 ```bash
-git push origin fuad/feat:add-map
+git push origin fuad/add-map
 ```
 
 ---
