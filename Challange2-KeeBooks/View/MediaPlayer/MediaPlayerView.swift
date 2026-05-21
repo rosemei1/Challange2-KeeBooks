@@ -32,7 +32,8 @@ struct MediaPlayerView: View {
                             .scaledToFill()
                             .frame(
                                 width: geo.size.width,
-                                height: geo.size.height
+                                height: geo.size.height,
+                                alignment: .top
                             )
                             .clipped()
                     }
@@ -160,7 +161,6 @@ struct MediaPlayerView: View {
             .toolbar {
 
                 ToolbarItem(placement: .navigationBarLeading) {
-
                     Button {
                         dismiss()
                     } label: {
