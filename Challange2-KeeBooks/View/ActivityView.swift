@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ActivitylView.swift
 //  Challange2-KeeBooks
 //
 //  Created by Nadia Putri Natali Lubis on 20/05/26.
@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct DetailView: View {
+struct ActivitylView: View {
     var body: some View {
         
         NavigationStack{
@@ -33,5 +33,5 @@ struct DetailView: View {
 
 
 #Preview {
-    DetailView()
+    ActivitylView()
 }
