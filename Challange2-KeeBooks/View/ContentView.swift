@@ -6,8 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query private var books: [Books]
+
     var body: some View {
         
         TabView {
@@ -26,6 +30,8 @@ struct ContentView: View {
         .tint(.primary9)
     }
 }
+
 #Preview {
     ContentView()
+        .modelContainer(for: Books.self, inMemory: true)
 }
