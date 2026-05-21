@@ -18,7 +18,7 @@ struct ContentView: View {
                 }
                 
                 Tab("Library", systemImage: "books.vertical.fill") {
-                    
+                    LibraryView()
                 }
                 
                 Tab("Activity", systemImage: "clock.fill") {
