@@ -11,12 +11,8 @@ import SwiftUI
 struct Challange2_KeeBooksApp: App {
     var body: some Scene {
         WindowGroup {
-<<<<<<< HEAD
             ContentView()
                 .preferredColorScheme(.light)
-=======
-            LibraryView()
->>>>>>> add-LibPage
         }
     }
 }
