@@ -22,7 +22,7 @@ struct ContentView: View {
                 }
                 
                 Tab("Activity", systemImage: "clock.fill") {
-
+                    ActivitylView()
                 }
                 
             
