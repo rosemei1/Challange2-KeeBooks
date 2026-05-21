@@ -7,6 +7,7 @@ struct HomeView: View {
     var body: some View {
         GeometryReader { proxy in
             ScrollView {
+                
                 VStack(spacing: 40){
                     // MARK: - Title
                     VStack(alignment: .leading) {
@@ -70,8 +71,11 @@ struct HomeView: View {
                             
                             LinearGradient(
                                 colors: [
-                                    Color.white.opacity(0.3),
-                                    Color.white.opacity(0.5)
+                                    Color.white.opacity(1),
+                                    Color.white.opacity(0.5),
+                                    Color.white.opacity(0.2),
+                                    Color.white.opacity(0.5),
+                                    Color.white.opacity(1)
                                 ],
                                 startPoint: .top,
                                 endPoint: .bottom
@@ -184,6 +188,7 @@ struct HomeView: View {
                     .padding(.horizontal)
                 }
             }
+            .scrollBounceBehavior(.basedOnSize)
             .ignoresSafeArea(edges: [.top, .leading, .trailing])
             .sheet(isPresented: $isPresented) {
                 SettingTimeView()
@@ -194,10 +199,6 @@ struct HomeView: View {
                 
                 
             }
-            
-            
-            
-            
         }
     }
 }
