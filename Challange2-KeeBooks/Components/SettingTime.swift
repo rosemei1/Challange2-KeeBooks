@@ -19,7 +19,7 @@ struct SettingTime: View {
                         
             Color.clear
             
-            Form {
+            List {
                 
                 Section {
                     
