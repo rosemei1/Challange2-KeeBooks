@@ -10,23 +10,48 @@ import SwiftUI
 struct SettingTime: View {
     
     @State private var selectedNotification = 15
+    
     let notifications: [Int] = [15, 30, 45, 60]
     
     var body: some View {
-        Form {
-            Text("Sleep Time")
-                .font(.title3)
-                .bold()
+        
+        ZStack {
+                        
+            Color.clear
             
-            DatePicker("", selection: .constant(Date()), displayedComponents: .hourAndMinute).datePickerStyle(.wheel)
-            
-            Picker("Notify to pickup phone", selection: $selectedNotification) {
-                ForEach(notifications, id: \.self) { notification in
-                    Text("\(notification) minutes before")
+            List {
                 
+                Section {
+                    
+                    Text("Sleep Time")
+                        .font(.title3)
+                        .bold()
+                    
+                    DatePicker(
+                        "",
+                        selection: .constant(Date()),
+                        displayedComponents: .hourAndMinute
+                    )
+                    .datePickerStyle(.wheel)
+                    
+                    Picker(
+                        selection: $selectedNotification
+                    ) {
+                        
+                        ForEach(notifications, id: \.self) { notification in
+                            
+                            Text("\(notification) minutes before")
+                        }
+                    } label : {
+                        Text("Notify to pickup phone")
+                            .font(.title3)
+                            .bold()
+                    }
+                    .pickerStyle(.inline)
                 }
             }
-            .pickerStyle(.inline)
+            .scrollContentBackground(.hidden)
+            .background(.clear)
         }
     }
 }

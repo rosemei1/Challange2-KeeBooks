@@ -10,27 +10,22 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
             
             
             TabView {
                 Tab("Home", systemImage: "house.fill") {
-                    
+                    HomeView()
                 }
                 
                 Tab("Library", systemImage: "books.vertical.fill") {
-                    
+                    LibraryView()
                 }
                 
                 Tab("Activity", systemImage: "clock.fill") {
-                    
+                    ActivitylView()
                 }
                 
-            }
+            
         }
     }
 }

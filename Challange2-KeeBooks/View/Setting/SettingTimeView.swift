@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SettingTimeView: View {
+    
+    @Environment(\.dismiss) private var dismiss
     var body: some View {
         NavigationStack {
             VStack {
@@ -18,7 +20,7 @@ struct SettingTimeView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save", systemImage: "checkmark") {
-                        
+                        dismiss()
                     }
                     .tint(.primary9)
                 
@@ -26,12 +28,15 @@ struct SettingTimeView: View {
                 
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", systemImage: "xmark") {
-                        
+                        dismiss()
                     }
                     .tint(.red)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.clear)
         }
+        
     }
 }
 
