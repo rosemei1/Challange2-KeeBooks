@@ -45,7 +45,7 @@ struct DetailView: View {
                         
                     }
                     HStack {
-                        ButtonFilled(label: "Play", icon: "play.fill") {
+                        ButtonFilled(label: "Play", icon: "play.fill", width: 150) {
                             print("Test")
                         }
                         ButtonOutlined(label: "Pick", icon: "hand.tap.fill") {

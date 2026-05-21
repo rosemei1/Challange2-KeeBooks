@@ -12,11 +12,7 @@ struct OnGoingSubView: View {
         VStack {
             
             HStack (){
-                Text("On going")
-                    .font(.title2)
-                Button("More", systemImage: "chevron.right.circle", action: {})
-                    .labelStyle(.iconOnly)
-                Spacer()
+                Chevron(title: "On Going")
 
             }
             HorizontalCard()

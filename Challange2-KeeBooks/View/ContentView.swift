@@ -10,23 +10,20 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         
+        TabView {
+            Tab("Home", systemImage: "house.fill") {
+                HomeView()
+            }
             
+            Tab("Library", systemImage: "books.vertical.fill") {
+                LibraryView()
+            }
             
-            TabView {
-                Tab("Home", systemImage: "house.fill") {
-                    HomeView()
-                }
-                
-                Tab("Library", systemImage: "books.vertical.fill") {
-                    LibraryView()
-                }
-                
-                Tab("Activity", systemImage: "clock.fill") {
-                    ActivitylView()
-                }
-                
-            
+            Tab("Activity", systemImage: "clock.fill") {
+                ActivitylView()
+            }
         }
+        .tint(.primary9)
     }
 }
 #Preview {

@@ -13,11 +13,7 @@ struct CompleteSubView: View {
         VStack {
             
             HStack (){
-                Text("Complete")
-                    .font(.title2)
-                Button("More", systemImage: "chevron.right.circle", action: {})
-                    .labelStyle(.iconOnly)
-                Spacer()
+                Chevron(title: "Complete")
 
             }
             ScrollView (.horizontal){
@@ -28,6 +24,7 @@ struct CompleteSubView: View {
                     VerticalCard()
                 }
             }
+            .scrollIndicators(.hidden)
         }
         .padding()
     }

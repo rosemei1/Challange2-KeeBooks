@@ -8,25 +8,23 @@ struct LibraryView: View {
             GridItem(.flexible()),
         ]
         
-        ScrollView{
-            VStack{
+        NavigationStack {
+            ScrollView{
                 VStack{
-                    Text("Library")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .fontDesign(.rounded)
-                        .padding(.horizontal)
-                }
-                .frame(
-                    maxWidth: .infinity,
-                    alignment: .topLeading
-                )
-                LazyVGrid(columns: columns, spacing: 16){
-                    ForEach(items, id: \.self){
-                        item in VerticalCard()
+                    LazyVGrid(columns: columns, spacing: 16){
+                        ForEach(items, id: \.self){ item in
+                            VerticalCard()
+                        }
                     }
                 }
             }
+            .scrollIndicators(.hidden)
+            .navigationTitle("Library")
+            .background {
+                BackgroundView()
+            }
+            
+
         }
     }
 }

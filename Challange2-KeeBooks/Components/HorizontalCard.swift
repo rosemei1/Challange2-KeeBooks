@@ -27,11 +27,14 @@ struct HorizontalCard: View {
                         .font(.caption)
                     
                     ProgressView(value: 0.7)
+                        .tint(.primary9)
                 }
                 .padding(6)
                 
                 Button("Pick", systemImage: "plus.circle", action: {})
                     .labelStyle(.iconOnly)
+                    .font(.title)
+                    .foregroundStyle(.primary9)
                     .padding(6)
                 
             }

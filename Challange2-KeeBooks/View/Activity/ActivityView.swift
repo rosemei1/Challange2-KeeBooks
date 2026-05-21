@@ -12,19 +12,20 @@ struct ActivitylView: View {
     var body: some View {
         
         NavigationStack{
-            OnGoingSubView()
-            CompleteSubView()
-            Spacer()
+            ScrollView {
+                OnGoingSubView()
+                CompleteSubView()
+                Spacer()
+            }
+            .scrollIndicators(.hidden)
             
             
             
             
 //            Navigation
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar{
-                    ToolbarItem(placement: .principal){
-                        Text("Activity")
-                    }
+                .navigationTitle("Activity")
+                .background {
+                    BackgroundView()
                 }
         }
         

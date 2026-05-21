@@ -11,6 +11,7 @@ struct ButtonFilled: View {
     
     var label: String
     var icon: String
+    var width: CGFloat
     var action: () -> Void = {}
     
     var body: some View {
@@ -18,7 +19,7 @@ struct ButtonFilled: View {
             action()
         }
         .foregroundStyle(.white)
-        .frame(width: 150, height: 35)
+        .frame(width: width, height: 35)
         .background(.primary9)
         .glassEffect(.regular, in: .capsule)
         .clipShape(RoundedRectangle(cornerRadius: 20))
@@ -26,5 +27,5 @@ struct ButtonFilled: View {
 }
 
 #Preview {
-    ButtonFilled(label: "Play", icon: "play.fill")
+    ButtonFilled(label: "Play", icon: "play.fill", width: 150)
 }
