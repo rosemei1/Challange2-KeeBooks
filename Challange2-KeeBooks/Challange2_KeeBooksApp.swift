@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct Challange2_KeeBooksApp: App {
@@ -14,5 +15,6 @@ struct Challange2_KeeBooksApp: App {
             ContentView()
                 .preferredColorScheme(.light)
         }
+        .modelContainer(for: Books.self)
     }
 }
