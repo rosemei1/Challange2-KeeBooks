@@ -17,10 +17,8 @@ struct MediaPlayerView: View {
     @State private var progress: Double = 0.7
     
     var body: some View {
-        
-        NavigationStack {
-            
-            ZStack {
+
+        ZStack {
                 
                 BackgroundView()
                     .ignoresSafeArea()
@@ -156,12 +154,13 @@ struct MediaPlayerView: View {
             }
             .navigationTitle("Player")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
             .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
-                
+
                 ToolbarItem(placement: .navigationBarLeading) {
-                    
+
                     Button {
                         dismiss()
                     } label: {
@@ -169,7 +168,6 @@ struct MediaPlayerView: View {
                     }
                 }
             }
-        }
     }
 }
 
