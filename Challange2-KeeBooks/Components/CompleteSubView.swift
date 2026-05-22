@@ -18,10 +18,9 @@ struct CompleteSubView: View {
             }
             ScrollView (.horizontal){
                 HStack{
-                    VerticalCard()
-                    VerticalCard()
-                    VerticalCard()
-                    VerticalCard()
+                    ForEach(Book.samples.filter { $0.status == "completed" }) { book in
+                        VerticalCard(book: book)
+                    }
                 }
             }
             .scrollIndicators(.hidden)

@@ -1,31 +1,19 @@
 import SwiftUI
 
 struct LibraryView: View {
-    private let dummyBook = Book(
-        title: "The Book Title",
-        cover: "dummyBookCover",
-        audio: "sample.mp3",
-        author: "Author Name",
-        narrator: "Narrator",
-        synopsis: "",
-        duration: 3600,
-        status: "unread"
-    )
+    let columns = [
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+    ]
 
     var body: some View {
-        let items = Array(1...6)
-        let columns = [
-            GridItem(.flexible()),
-            GridItem(.flexible()),
-        ]
-
         NavigationStack {
-            ScrollView{
-                VStack{
-                    LazyVGrid(columns: columns, spacing: 16){
-                        ForEach(items, id: \.self){ item in
-                            NavigationLink(destination: MediaPlayerView(book: dummyBook)) {
-                                VerticalCard()
+            ScrollView {
+                VStack {
+                    LazyVGrid(columns: columns, spacing: 16) {
+                        ForEach(Book.samples) { book in
+                            NavigationLink(destination: MediaPlayerView(book: book)) {
+                                VerticalCard(book: book)
                             }
                             .buttonStyle(.plain)
                         }

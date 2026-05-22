@@ -172,16 +172,5 @@ struct MediaPlayerView: View {
 }
 
 #Preview {
-    MediaPlayerView(
-        book: Book(
-            title: "The Hunger Game",
-            cover: "dune",
-            audio: "sample.mp3",
-            author: "Suzanne Collins",
-            narrator: "The Assasins",
-            synopsis: "",
-            duration: 3351,
-            status: "unread"
-        )
-    )
+    MediaPlayerView(book: Book.samples[0])
 }
