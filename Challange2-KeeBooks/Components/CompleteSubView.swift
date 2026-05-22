@@ -13,28 +13,35 @@ struct CompleteSubView: View {
     
     @Binding var chevron: Bool
     @Query(sort: \Book.duration) private var books: [Book]
+    @State var isDisabled = false
     
+    var completedBook: [Book] {
+        Book.booksData.filter { $0.status == "completed" }
+    }
     var array = Array(1...6)
     var body: some View {
         VStack {
             
             HStack (){
-                Chevron(title: "Complete", action: {
+                Chevron(title: "Complete", isDisabled: $isDisabled, action: {
                     chevron.toggle()
                 })
             }
             ScrollView (.horizontal){
                 HStack{
-                    ForEach(Book.samples.filter { $0.status == "completed" }) { book in
-                        //                        VerticalCard(book: book)
-                        NavigationLink(destination: MediaPlayerView(book: book)) {
-                           VerticalCard(book: book)
-                            
+                    if !completedBook.isEmpty {
+                        ForEach(completedBook) { book in
+                            //                        VerticalCard(book: book)
+                            NavigationLink(destination: DetailView(book: book)) {
+                               VerticalCard(book: book)
+                            }
                             
                         }
-                        
-                        
+                    } else {
+                        ContentUnavailableView("There is no book completed", systemImage: "books.vertical.fill", description: Text("You can Complete a book from library"))
+//                            .foregroundStyle(.primary9)
                     }
+                    
                 }
                 .scrollIndicators(.hidden)
             }
@@ -43,6 +50,14 @@ struct CompleteSubView: View {
             }
             .padding()
         }
+        .onAppear {
+            isDisabled = completedBook.isEmpty
+        }
+        .onChange(of: books) {
+            isDisabled = completedBook.isEmpty
+        }
+        .padding()
+
     }
     
 }

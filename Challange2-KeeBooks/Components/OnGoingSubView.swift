@@ -12,24 +12,38 @@ struct OnGoingSubView: View {
 
     @Binding var chevron: Bool
     @Environment(\.modelContext) private var modelContext
-    @Query private var allBooks: [Book]
+    @Query(sort: \Book.title) private var allBooks: [Book]
+    @Binding var isDisabled: Bool
     
-    var pickedBook: Book? {
-        allBooks.first{$0.isPicked}
+//    var pickedBook: Book? {
+//        allBooks.first{$0.isPicked}
+//    }
+    
+    var ongoingBooks: [Book] {
+        allBooks.filter { $0.status == "ongoing" }
     }
 
     var body: some View {
         VStack {
             HStack {
-                Chevron(title: "On Going")
-            }
-
-            ForEach(allBooks.filter { $0.status == "ongoing" }.prefix(2)) { book in
-                NavigationLink(destination: MediaPlayerView(book: book)) {
-                    HorizontalCard(book: book)
+                Chevron(title: "On Going", isDisabled: $isDisabled) {
+                    chevron.toggle()
                 }
-                .buttonStyle(.plain)
             }
+            
+            if !ongoingBooks.isEmpty {
+                ForEach(ongoingBooks.prefix(3)) { book in
+                    NavigationLink(destination: DetailView(book: book)) {
+                        HorizontalCard(book: book)
+                    }
+//                    .buttonStyle(.plain)
+                }
+            } else {
+                ContentUnavailableView("There is no ongoing book", systemImage: "books.vertical.fill", description: Text("You can start listening to an audiobook from library"))
+            }
+            
+
+            
         }
         .navigationDestination(isPresented: $chevron) {
             OnGoingView()
@@ -40,6 +54,6 @@ struct OnGoingSubView: View {
 
 
 #Preview {
-    OnGoingSubView(chevron: .constant(false))
+    OnGoingSubView(chevron: .constant(false), isDisabled: .constant(true))
         .modelContainer(Data.shared.modelContainer)
 }

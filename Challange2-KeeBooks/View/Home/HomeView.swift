@@ -8,8 +8,8 @@ struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var allBooks: [Book]
     
-    var pickedBook: Book? {
-        allBooks.first {$0.isPicked}
+    var pickedBook: Book {
+        allBooks.first {$0.isPicked}!
     }
     
     var body: some View {
@@ -43,24 +43,24 @@ struct HomeView: View {
 //                                Text("Total books: \(allBooks.count)")
 //                                Text("Picked: \(allBooks.filter { $0.isPicked }.count)")
                                 
-                                if let pick = pickedBook {
-                                    Text("\(pick.title)")
+//                                if let pick = pickedBook {
+                                    Text("\(pickedBook.title)")
                                         .font(.title)
                                         .fontWeight(.bold)
                                         .fontDesign(.rounded)
                                     
-                                    Text("\(pick.author)")
+                                    Text("\(pickedBook.author)")
                                         .font(.title3)
                                         .fontWeight(.thin)
                                         .fontDesign(.rounded)
-                                } else {
-                                    Text("No book picked yet")
-                                        .font(.title3)
-                                        .fontWeight(.thin)
-                                        .fontDesign(.rounded)
-                                    Text("")
-                                    Text("")
-                                }
+//                                } else {
+//                                    Text("No book picked yet")
+//                                        .font(.title3)
+//                                        .fontWeight(.thin)
+//                                        .fontDesign(.rounded)
+//                                    Text("")
+//                                    Text("")
+//                                }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal)
@@ -83,7 +83,7 @@ struct HomeView: View {
                         .frame(minHeight: 200)
                         .background(alignment: .top) {
                             ZStack {
-                                Image("dune")
+                                Image(pickedBook.cover)
                                     .resizable()
                                     .scaledToFill()
                                     .frame(
@@ -219,5 +219,5 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
-        .modelContainer(for: Book.self, inMemory: true)
+        .modelContainer(Data.shared.modelContainer)
 }

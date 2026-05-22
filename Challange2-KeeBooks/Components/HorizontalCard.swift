@@ -32,11 +32,12 @@ struct HorizontalCard: View {
 
             VStack(alignment: .leading) {
                 Text(book.title)
-                    .font(.default)
                     .bold()
+                    .foregroundStyle(.black)
 
                 Text(book.author)
                     .font(.caption)
+                    .foregroundStyle(Color.gray)
 
                 ProgressView(value: 0.7)
                     .tint(.primary9)

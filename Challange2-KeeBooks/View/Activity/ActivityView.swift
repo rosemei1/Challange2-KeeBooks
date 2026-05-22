@@ -12,12 +12,13 @@ import SwiftData
 struct ActivityView: View {
     @State var chevron = false
     @State var chevronOngoing = false
+    @State var isDisabled = false
     
     var body: some View {
         
         NavigationStack{
             ScrollView {
-                OnGoingSubView(chevron: $chevronOngoing)
+                OnGoingSubView(chevron: $chevronOngoing, isDisabled: $isDisabled)
                 CompleteSubView(chevron: $chevron)
                 Spacer()
             }

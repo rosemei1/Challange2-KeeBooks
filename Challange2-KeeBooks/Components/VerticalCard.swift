@@ -22,11 +22,13 @@ struct VerticalCard: View {
                 Text(book.title)
                     .font(.default)
                     .bold()
+                    .foregroundStyle(.black)
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
 
                 Text(book.author)
                     .font(.caption)
+                    .foregroundStyle(.gray)
                     .lineLimit(1)
             }
             .frame(width: 130, height: 70)
@@ -39,5 +41,5 @@ struct VerticalCard: View {
 
 
 #Preview {
-    VerticalCard(book: Book.samples[0])
+    VerticalCard(book: Data.shared.books[0])
 }

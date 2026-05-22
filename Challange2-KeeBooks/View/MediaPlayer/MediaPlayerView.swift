@@ -172,5 +172,5 @@ struct MediaPlayerView: View {
 }
 
 #Preview {
-    MediaPlayerView(book: Book.samples[0])
+    MediaPlayerView(book: Data.shared.books.first!)
 }
