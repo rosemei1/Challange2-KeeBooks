@@ -31,4 +31,59 @@ class Book: Identifiable {
         self.status = status
         self.bookmark = bookmark
     }
+    
+    static let booksData = [
+        Books(
+            title: "Beauty and the Monster",
+            cover: "dune",
+            audio: "Beauty and the Monster",
+            author: "",
+            narrator: "",
+            synopsis: "",
+            duration: 0,
+            status:""
+        ),
+        Books(
+            title: "By the Sea",
+            cover: "dune",
+            audio: "By the Sea",
+            author: "",
+            narrator: "",
+            synopsis: "",
+            duration: 0,
+            status:""
+        ),
+        Books(
+            title: "Morning in the West",
+            cover: "dune",
+            audio: "Morning in the West",
+            author: "",
+            narrator: "",
+            synopsis: "",
+            duration: 0,
+            status:""
+        ),
+        Books(
+            title: "Tale of the Witch Doll",
+            cover: "dune",
+            audio: "Tale of the Witch Doll",
+            author: "",
+            narrator: "",
+            synopsis: "",
+            duration: 0,
+            status:""
+        ),
+        Books(
+            title: "The Black Cat",
+            cover: "dune",
+            audio: "The Black Cat",
+            author: "",
+            narrator: "",
+            synopsis: "",
+            duration: 0,
+            status:""
+        ),
+    ]
+
 }
+

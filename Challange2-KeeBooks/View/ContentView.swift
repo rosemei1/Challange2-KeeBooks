@@ -28,6 +28,13 @@ struct ContentView: View {
             }
         }
         .tint(.primary9)
+        .task {
+            if books.isEmpty {
+                for book in Books.booksData {
+                    modelContext.insert(book)
+                }
+            }
+        }
     }
 }
 
