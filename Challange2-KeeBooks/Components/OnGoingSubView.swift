@@ -9,13 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct OnGoingSubView: View {
-    
+
     @Binding var chevron: Bool
-    @Query(sort: \Book.title) private var books: [Book]
-    
-    let columns = [
-        GridItem(.flexible()),
-    ]
 
     var body: some View {
         VStack {
@@ -29,11 +24,10 @@ struct OnGoingSubView: View {
                 }
                 .buttonStyle(.plain)
             }
-
         }
-        .navigationDestination(isPresented: $chevron, destination: {
+        .navigationDestination(isPresented: $chevron) {
             OnGoingView()
-        })
+        }
         .padding()
     }
 }
@@ -43,4 +37,3 @@ struct OnGoingSubView: View {
     OnGoingSubView(chevron: .constant(false))
         .modelContainer(Data.shared.modelContainer)
 }
-

@@ -26,19 +26,25 @@ struct CompleteSubView: View {
             ScrollView (.horizontal){
                 HStack{
                     ForEach(Book.samples.filter { $0.status == "completed" }) { book in
-                        VerticalCard(book: book)
+                        //                        VerticalCard(book: book)
+                        NavigationLink(destination: MediaPlayerView(book: book)) {
+                           VerticalCard(book: book)
+                            
+                            
+                        }
+                        
+                        
                     }
-                    
-                    
                 }
+                .scrollIndicators(.hidden)
             }
-            .scrollIndicators(.hidden)
+            .navigationDestination(isPresented: $chevron){
+                FinishedView()
+            }
+            .padding()
         }
-        .navigationDestination(isPresented: $chevron){
-            FinishedView()
-        }
-        .padding()
     }
+    
 }
 
 

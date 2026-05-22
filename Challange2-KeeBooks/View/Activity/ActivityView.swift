@@ -36,6 +36,9 @@ struct ActivitylView: View {
 }
 
 
+
+
+
 #Preview {
     ActivitylView()
 }

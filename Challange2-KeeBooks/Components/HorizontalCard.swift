@@ -11,41 +11,33 @@ import SwiftUI
 struct HorizontalCard: View {
     var book : Book
     var body: some View {
-        Button (action: {}) {
-            HStack{
-                Image(book.cover)
-                    .resizable()
-                    .frame(width: 67.5, height: 90)
-                
-                
-                VStack (alignment: .leading){
-                    Text(book.title)
-                        .font(.default)
-                        .bold()
-                        
-                    
-                    Text(book.author)
-                        .font(.caption)
-                    
-                    ProgressView(value: 0.7)
-                        .tint(.primary9)
-                }
-                .padding(6)
-                
-                Button("Pick", systemImage: "plus.circle", action: {})
-                    .labelStyle(.iconOnly)
-                    .font(.title)
-                    .foregroundStyle(.primary9)
-                    .padding(6)
-                
+        HStack {
+            Image(book.cover)
+                .resizable()
+                .frame(width: 67.5, height: 90)
+
+            VStack(alignment: .leading) {
+                Text(book.title)
+                    .font(.default)
+                    .bold()
+
+                Text(book.author)
+                    .font(.caption)
+
+                ProgressView(value: 0.7)
+                    .tint(.primary9)
             }
-            .padding()
-//                        .background(.background.secondary)
-                        .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            
+            .padding(6)
+
+            Button("Pick", systemImage: "plus.circle", action: {})
+                .labelStyle(.iconOnly)
+                .font(.title)
+                .foregroundStyle(.primary9)
+                .padding(6)
         }
-        .buttonStyle(.plain)
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 
