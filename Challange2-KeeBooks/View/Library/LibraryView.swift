@@ -18,6 +18,8 @@ struct LibraryView: View {
                     }
                 }
             }
+//            .toolbarVisibility(.hidden, for: .bottomBar)
+            
             .scrollIndicators(.hidden)
             .navigationTitle("Library")
             .background {
@@ -26,6 +28,9 @@ struct LibraryView: View {
             
 
         }
+        .padding(.top, -85)
+//        .offset(y: -50)
+
     }
 }
 

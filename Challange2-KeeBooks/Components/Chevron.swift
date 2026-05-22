@@ -11,13 +11,16 @@ import SwiftUI
 struct Chevron: View {
     
     let title : String
-    
+    var action: () -> Void = {}
+
     var body: some View {
         VStack {
             HStack (alignment: .center){
                 Text(title)
                     .font(.title2)
-                Button("More", systemImage: "chevron.right.circle", action: {})
+                Button("More", systemImage: "chevron.right.circle",) {
+                    action()
+                }
                     .labelStyle(.iconOnly)
                     .font(.title)
                     .foregroundStyle(.primary9)

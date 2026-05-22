@@ -16,10 +16,10 @@ struct DetailView: View {
             
             ScrollView {
                 VStack {
-                    Image("")
+                    Image("dune")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 204, height: 308)
+                        .frame(width: 202, height: 308)
                         .background(.gray)
                         .padding(.top, 50)
                         .shadow(radius: 30)
@@ -72,11 +72,8 @@ struct DetailView: View {
                 Color.primary1
                 BackgroundView()
             }
-            
-            
-            
-        
         }
+        
     }
 }
 

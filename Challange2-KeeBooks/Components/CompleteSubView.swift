@@ -9,22 +9,29 @@ import Foundation
 import SwiftUI
 
 struct CompleteSubView: View {
+    
+    @Binding var chevron: Bool
+    
+    var array = Array(1...6)
     var body: some View {
         VStack {
             
             HStack (){
-                Chevron(title: "Complete")
-
+                Chevron(title: "Complete", action: {
+                    chevron.toggle()
+                })
             }
             ScrollView (.horizontal){
-                HStack{
-                    VerticalCard()
-                    VerticalCard()
-                    VerticalCard()
-                    VerticalCard()
+                LazyHStack {
+                    ForEach(array, id: \.self) {_ in
+                        VerticalCard()
+                    }
                 }
             }
             .scrollIndicators(.hidden)
+        }
+        .navigationDestination(isPresented: $chevron){
+            FinishedView()
         }
         .padding()
     }
@@ -32,6 +39,6 @@ struct CompleteSubView: View {
 
 
 #Preview {
-    CompleteSubView()
+    CompleteSubView(chevron: .constant(false))
 }
 

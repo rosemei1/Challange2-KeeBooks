@@ -8,23 +8,31 @@
 import SwiftUI
 
 struct OnGoingSubView: View {
+    
+    @Binding var chevron: Bool
+
     var body: some View {
         VStack {
             
             HStack (){
-                Chevron(title: "On Going")
+                Chevron(title: "On Going", action: {
+                    chevron.toggle()
+                })
 
             }
             HorizontalCard()
             HorizontalCard()
             HorizontalCard()
         }
+        .navigationDestination(isPresented: $chevron, destination: {
+            OnGoingView()
+        })
         .padding()
     }
 }
 
 
 #Preview {
-    OnGoingSubView()
+    OnGoingSubView(chevron: .constant(false))
 }
 

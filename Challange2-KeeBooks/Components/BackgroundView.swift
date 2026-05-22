@@ -16,7 +16,7 @@ struct BackgroundView: View {
             .background(.secondary1)
             .clipShape(.rect(bottomLeadingRadius: 42, bottomTrailingRadius: 42))
             .offset(y: -300)
-            .blur(radius: 10)
+            .blur(radius: 15)
     }
 }
 

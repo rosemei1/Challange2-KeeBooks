@@ -180,8 +180,8 @@ struct HomeView: View {
                 }
                 .scrollBounceBehavior(.basedOnSize)
                 .scrollIndicators(.hidden)
+                .ignoresSafeArea(edges: [.top, .leading, .trailing])
                 .navigationTitle("Home")
-                .ignoresSafeArea(edges: [.top])
                 .sheet(isPresented: $isPresented) {
                     SettingTimeView()
                     

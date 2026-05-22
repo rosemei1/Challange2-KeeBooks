@@ -9,12 +9,14 @@ import Foundation
 import SwiftUI
 
 struct ActivitylView: View {
+    @State var chevron = false
+    @State var chevronOngoing = false
     var body: some View {
         
         NavigationStack{
             ScrollView {
-                OnGoingSubView()
-                CompleteSubView()
+                OnGoingSubView(chevron: $chevronOngoing)
+                CompleteSubView(chevron: $chevron)
                 Spacer()
             }
             .scrollIndicators(.hidden)
@@ -28,6 +30,7 @@ struct ActivitylView: View {
                     BackgroundView()
                 }
         }
+        .padding(.top, -85)
         
     }
 }
