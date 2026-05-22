@@ -10,35 +10,25 @@ import SwiftUI
 
 struct VerticalCard: View {
     var body: some View {
-        Button (action: {}) {
-            VStack{
-                Image("BookCover1")
-                    .resizable()
-                    .frame(width: 90, height: 120)
-                    .padding(.top,6)
-                
-                
-                VStack (alignment: .center){
-                    Text("The Book Title")
-                        .font(.default)
-                        .bold()
-                        
-                    
-                    Text("Author Name")
-                        .font(.caption)
-                    
-                }
-//                .padding(6)
-                .frame(width: 130, height: 70)
-                
+        VStack{
+            Image("BookCover1")
+                .resizable()
+                .frame(width: 90, height: 120)
+                .padding(.top,6)
+
+            VStack (alignment: .center){
+                Text("The Book Title")
+                    .font(.default)
+                    .bold()
+
+                Text("Author Name")
+                    .font(.caption)
             }
-            .padding()
-//                        .background(.background.secondary)
-                        .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            
+            .frame(width: 130, height: 70)
         }
-        .buttonStyle(.plain)
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 
