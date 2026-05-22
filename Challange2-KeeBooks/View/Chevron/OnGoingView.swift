@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct OnGoingView: View {
-    let items = Array(1...6)
+//    let items = Array(1...6)
+    @Query(sort: \Books.title) private var books: [Books]
     let columns = [
         GridItem(.flexible()),
     ]
@@ -18,8 +20,8 @@ struct OnGoingView: View {
             ScrollView{
                 VStack{
                     LazyVGrid(columns: columns, spacing: 16){
-                        ForEach(items, id: \.self){ item in
-                            HorizontalCard()
+                        ForEach(books){ book in
+                            HorizontalCard(book: book)
                         }
                     }
                 }
@@ -37,4 +39,5 @@ struct OnGoingView: View {
 
 #Preview {
     OnGoingView()
+        .modelContainer(Data.shared.modelContainer)
 }

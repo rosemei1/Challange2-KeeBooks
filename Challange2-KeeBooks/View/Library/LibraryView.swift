@@ -1,19 +1,23 @@
 import SwiftUI
+import SwiftData
 
 struct LibraryView: View {
-    private let dummyBook = Books(
-        title: "The Book Title",
-        cover: "dummyBookCover",
-        audio: "sample.mp3",
-        author: "Author Name",
-        narrator: "Narrator",
-        synopsis: "",
-        duration: 3600,
-        status: "unread"
-    )
-
+//    private let dummyBook = Books(
+//        title: "The Book Title",
+//        cover: "dummyBookCover",
+//        audio: "sample.mp3",
+//        author: "Author Name",
+//        narrator: "Narrator",
+//        synopsis: "",
+//        duration: 3600,
+//        status: "unread"
+//    )
+    
+    @Query(sort: \Books.title) private var books: [Books]
+    @Environment(\.modelContext) private var context
+    
     var body: some View {
-        let items = Array(1...6)
+//        let items = Array(1...6)
         let columns = [
             GridItem(.flexible()),
             GridItem(.flexible()),
@@ -23,9 +27,9 @@ struct LibraryView: View {
             ScrollView{
                 VStack{
                     LazyVGrid(columns: columns, spacing: 16){
-                        ForEach(items, id: \.self){ item in
-                            NavigationLink(destination: MediaPlayerView(book: dummyBook)) {
-                                VerticalCard()
+                        ForEach(books){ book in
+                            NavigationLink(destination: MediaPlayerView(book: book)) {
+                                VerticalCard(book: book)
                             }
                             .buttonStyle(.plain)
                         }
@@ -49,4 +53,5 @@ struct LibraryView: View {
 
 #Preview {
     LibraryView()
+        .modelContainer(Data.shared.modelContainer)
 }

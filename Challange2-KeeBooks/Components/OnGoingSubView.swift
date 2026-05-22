@@ -6,10 +6,16 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct OnGoingSubView: View {
     
     @Binding var chevron: Bool
+    @Query(sort: \Books.title) private var books: [Books]
+    
+    let columns = [
+        GridItem(.flexible()),
+    ]
 
     var body: some View {
         VStack {
@@ -20,9 +26,13 @@ struct OnGoingSubView: View {
                 })
 
             }
-            HorizontalCard()
-            HorizontalCard()
-            HorizontalCard()
+            LazyVGrid(columns: columns) {
+                ForEach(books.prefix(3)) { book in
+                    HorizontalCard(book: book)
+                }
+            }
+//            HorizontalCard()
+//            HorizontalCard()
         }
         .navigationDestination(isPresented: $chevron, destination: {
             OnGoingView()
@@ -34,5 +44,6 @@ struct OnGoingSubView: View {
 
 #Preview {
     OnGoingSubView(chevron: .constant(false))
+        .modelContainer(Data.shared.modelContainer)
 }
 

@@ -10,7 +10,7 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var books: [Books]
+    @Query(sort: \Books.title) private var books: [Books]
 
     var body: some View {
         
@@ -28,10 +28,17 @@ struct ContentView: View {
             }
         }
         .tint(.primary9)
+        .task {
+            if books.isEmpty {
+                for book in Books.booksData {
+                    modelContext.insert(book)
+                }
+            }
+        }
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Books.self, inMemory: true)
+        .modelContainer(for: [Books.self], inMemory: true)
 }

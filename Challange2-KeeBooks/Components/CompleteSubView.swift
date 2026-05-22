@@ -7,10 +7,12 @@
 
 import Foundation
 import SwiftUI
+import SwiftData
 
 struct CompleteSubView: View {
     
     @Binding var chevron: Bool
+    @Query(sort: \Books.duration) private var books: [Books]
     
     var array = Array(1...6)
     var body: some View {
@@ -22,10 +24,12 @@ struct CompleteSubView: View {
                 })
             }
             ScrollView (.horizontal){
-                LazyHStack {
-                    ForEach(array, id: \.self) {_ in
-                        VerticalCard()
+                LazyHStack(alignment: .center) {
+                    ForEach(books.prefix(4)) {book in
+                        VerticalCard(book: book)
                     }
+                    
+                    
                 }
             }
             .scrollIndicators(.hidden)
@@ -40,5 +44,6 @@ struct CompleteSubView: View {
 
 #Preview {
     CompleteSubView(chevron: .constant(false))
+        .modelContainer(Data.shared.modelContainer)
 }
 

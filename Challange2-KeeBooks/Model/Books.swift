@@ -83,6 +83,16 @@ class Books {
             duration: 0,
             status:""
         ),
+        Books(
+            title: "",
+            cover: "dune",
+            audio: "",
+            author: "",
+            narrator: "",
+            synopsis: "",
+            duration: 0,
+            status:""
+        ),
     ]
 
 }
