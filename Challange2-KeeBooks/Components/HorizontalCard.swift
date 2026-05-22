@@ -7,9 +7,23 @@
 
 //import Foundation
 import SwiftUI
+import _SwiftData_SwiftUI
 
 struct HorizontalCard: View {
     var book : Book
+    
+    @Environment(\.modelContext) private var modelContext
+    @Query private var allBooks: [Book]
+    
+    
+    func pickBook (_ book: Book) {
+        for b in allBooks {
+            b.isPicked = false
+        }
+        book.isPicked = true
+    }
+    
+    
     var body: some View {
         HStack {
             Image(book.cover)
@@ -29,7 +43,9 @@ struct HorizontalCard: View {
             }
             .padding(6)
 
-            Button("Pick", systemImage: "plus.circle", action: {})
+            Button("Pick", systemImage: book.isPicked ? "checkmark.circle.fill" :"plus.circle") {
+                pickBook(book)
+            }
                 .labelStyle(.iconOnly)
                 .font(.title)
                 .foregroundStyle(.primary9)

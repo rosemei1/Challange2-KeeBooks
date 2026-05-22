@@ -11,6 +11,12 @@ import SwiftData
 struct OnGoingSubView: View {
 
     @Binding var chevron: Bool
+    @Environment(\.modelContext) private var modelContext
+    @Query private var allBooks: [Book]
+    
+    var pickedBook: Book? {
+        allBooks.first{$0.isPicked}
+    }
 
     var body: some View {
         VStack {
@@ -18,7 +24,7 @@ struct OnGoingSubView: View {
                 Chevron(title: "On Going")
             }
 
-            ForEach(Book.samples.filter { $0.status == "ongoing" }.prefix(2)) { book in
+            ForEach(allBooks.filter { $0.status == "ongoing" }.prefix(2)) { book in
                 NavigationLink(destination: MediaPlayerView(book: book)) {
                     HorizontalCard(book: book)
                 }

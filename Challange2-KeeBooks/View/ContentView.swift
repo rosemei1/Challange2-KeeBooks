@@ -17,6 +17,7 @@ struct ContentView: View {
         TabView {
             Tab("Home", systemImage: "house.fill") {
                 HomeView()
+                    .environment(\.modelContext, modelContext)
             }
             
             Tab("Library", systemImage: "books.vertical.fill") {
@@ -24,7 +25,7 @@ struct ContentView: View {
             }
             
             Tab("Activity", systemImage: "clock.fill") {
-                ActivitylView()
+                ActivityView()
             }
         }
         .tint(.primary9)

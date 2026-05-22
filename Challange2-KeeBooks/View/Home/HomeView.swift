@@ -1,8 +1,16 @@
 import SwiftUI
+import _SwiftData_SwiftUI
 
 struct HomeView: View {
     
     @State private var isPresented: Bool = false
+    
+    @Environment(\.modelContext) private var modelContext
+    @Query private var allBooks: [Book]
+    
+    var pickedBook: Book? {
+        allBooks.first {$0.isPicked}
+    }
     
     var body: some View {
         GeometryReader { proxy in
@@ -31,15 +39,28 @@ struct HomeView: View {
                                     .fontWeight(.bold)
                                     .fontDesign(.rounded)
                                 
-                                Text("Dune")
-                                    .font(.title)
-                                    .fontWeight(.bold)
-                                    .fontDesign(.rounded)
+
+//                                Text("Total books: \(allBooks.count)")
+//                                Text("Picked: \(allBooks.filter { $0.isPicked }.count)")
                                 
-                                Text("Frank Herbert")
-                                    .font(.title3)
-                                    .fontWeight(.thin)
-                                    .fontDesign(.rounded)
+                                if let pick = pickedBook {
+                                    Text("\(pick.title)")
+                                        .font(.title)
+                                        .fontWeight(.bold)
+                                        .fontDesign(.rounded)
+                                    
+                                    Text("\(pick.author)")
+                                        .font(.title3)
+                                        .fontWeight(.thin)
+                                        .fontDesign(.rounded)
+                                } else {
+                                    Text("No book picked yet")
+                                        .font(.title3)
+                                        .fontWeight(.thin)
+                                        .fontDesign(.rounded)
+                                    Text("")
+                                    Text("")
+                                }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal)
@@ -198,4 +219,5 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
+        .modelContainer(for: Book.self, inMemory: true)
 }
