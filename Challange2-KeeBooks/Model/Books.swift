@@ -34,9 +34,9 @@ class Books {
     
     static let booksData = [
         Books(
-            title: "",
+            title: "Beauty and the Monster",
             cover: "dune",
-            audio: "",
+            audio: "Beauty and the Monster",
             author: "",
             narrator: "",
             synopsis: "",
@@ -44,9 +44,9 @@ class Books {
             status:""
         ),
         Books(
-            title: "",
+            title: "By the Sea",
             cover: "dune",
-            audio: "",
+            audio: "By the Sea",
             author: "",
             narrator: "",
             synopsis: "",
@@ -54,9 +54,9 @@ class Books {
             status:""
         ),
         Books(
-            title: "",
+            title: "Morning in the West",
             cover: "dune",
-            audio: "",
+            audio: "Morning in the West",
             author: "",
             narrator: "",
             synopsis: "",
@@ -64,9 +64,9 @@ class Books {
             status:""
         ),
         Books(
-            title: "",
+            title: "Tale of the Witch Doll",
             cover: "dune",
-            audio: "",
+            audio: "Tale of the Witch Doll",
             author: "",
             narrator: "",
             synopsis: "",
@@ -74,19 +74,9 @@ class Books {
             status:""
         ),
         Books(
-            title: "",
+            title: "The Black Cat",
             cover: "dune",
-            audio: "",
-            author: "",
-            narrator: "",
-            synopsis: "",
-            duration: 0,
-            status:""
-        ),
-        Books(
-            title: "",
-            cover: "dune",
-            audio: "",
+            audio: "The Black Cat",
             author: "",
             narrator: "",
             synopsis: "",

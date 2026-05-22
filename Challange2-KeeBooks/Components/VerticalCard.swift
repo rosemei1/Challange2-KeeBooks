@@ -35,5 +35,5 @@ struct VerticalCard: View {
 
 
 #Preview {
-    VerticalCard(book: Books(title: "Dune", cover: "dune", audio: "", author: "Dune", narrator: "Dune", synopsis: "Lorem ipsum", duration: 0, status: "Done"))
+    VerticalCard(book: Books.booksData.first!)
 }
