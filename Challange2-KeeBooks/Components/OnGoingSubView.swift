@@ -14,7 +14,7 @@ struct OnGoingSubView: View {
                 Chevron(title: "On Going")
             }
 
-            ForEach(Book.samples.filter { $0.status == "ongoing" }) { book in
+            ForEach(Book.samples.filter { $0.status == "ongoing" }.prefix(2)) { book in
                 NavigationLink(destination: MediaPlayerView(book: book)) {
                     HorizontalCard(book: book)
                 }
