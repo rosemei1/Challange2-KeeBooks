@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class Books: Identifiable {
+class Book: Identifiable {
     var title: String
     var cover: String
     var audio: String

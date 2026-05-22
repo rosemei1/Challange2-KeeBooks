@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LibraryView: View {
-    private let dummyBook = Books(
+    private let dummyBook = Book(
         title: "The Book Title",
         cover: "dummyBookCover",
         audio: "sample.mp3",

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MediaPlayerView: View {
     
-    var book: Books
+    var book: Book
     
     @Environment(\.dismiss) private var dismiss
     
@@ -173,7 +173,7 @@ struct MediaPlayerView: View {
 
 #Preview {
     MediaPlayerView(
-        book: Books(
+        book: Book(
             title: "The Hunger Game",
             cover: "dune",
             audio: "sample.mp3",

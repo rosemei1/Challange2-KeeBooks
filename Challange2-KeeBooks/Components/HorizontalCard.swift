@@ -9,21 +9,22 @@
 import SwiftUI
 
 struct HorizontalCard: View {
+    var book : Book
     var body: some View {
         Button (action: {}) {
             HStack{
-                Image("BookCover1")
+                Image(book.cover)
                     .resizable()
                     .frame(width: 67.5, height: 90)
                 
                 
                 VStack (alignment: .leading){
-                    Text("The Book Title")
+                    Text(book.title)
                         .font(.default)
                         .bold()
                         
                     
-                    Text("Author Name")
+                    Text(book.author)
                         .font(.caption)
                     
                     ProgressView(value: 0.7)
@@ -50,5 +51,15 @@ struct HorizontalCard: View {
 
 
 #Preview {
-    HorizontalCard()
+    HorizontalCard(        book: Book(
+        title: "The Hunger Game",
+        cover: "dune",
+        audio: "sample.mp3",
+        author: "Suzanne Collins",
+        narrator: "The Assasins",
+        synopsis: "",
+        duration: 3351,
+        status: "unread"
+    )
+)
 }
