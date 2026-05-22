@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class Books: Identifiable {
+class Books {
     var title: String
     var cover: String
     var audio: String
@@ -31,4 +31,59 @@ class Books: Identifiable {
         self.status = status
         self.bookmark = bookmark
     }
+    
+    static let booksData = [
+        Books(
+            title: "",
+            cover: "dune",
+            audio: "",
+            author: "",
+            narrator: "",
+            synopsis: "",
+            duration: 0,
+            status:""
+        ),
+        Books(
+            title: "",
+            cover: "dune",
+            audio: "",
+            author: "",
+            narrator: "",
+            synopsis: "",
+            duration: 0,
+            status:""
+        ),
+        Books(
+            title: "",
+            cover: "dune",
+            audio: "",
+            author: "",
+            narrator: "",
+            synopsis: "",
+            duration: 0,
+            status:""
+        ),
+        Books(
+            title: "",
+            cover: "dune",
+            audio: "",
+            author: "",
+            narrator: "",
+            synopsis: "",
+            duration: 0,
+            status:""
+        ),
+        Books(
+            title: "",
+            cover: "dune",
+            audio: "",
+            author: "",
+            narrator: "",
+            synopsis: "",
+            duration: 0,
+            status:""
+        ),
+    ]
+
 }
+
