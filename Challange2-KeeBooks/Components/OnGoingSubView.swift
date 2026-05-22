@@ -29,13 +29,7 @@ struct OnGoingSubView: View {
                 }
                 .buttonStyle(.plain)
             }
-            LazyVGrid(columns: columns) {
-                ForEach(books.prefix(3)) { book in
-                    HorizontalCard(book: book)
-                }
-            }
-//            HorizontalCard()
-//            HorizontalCard()
+
         }
         .navigationDestination(isPresented: $chevron, destination: {
             OnGoingView()
