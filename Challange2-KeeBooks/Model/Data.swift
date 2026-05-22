@@ -17,12 +17,12 @@ class Data {
         modelContainer.mainContext
     }
     
-    var books: Books {
-        Books.booksData.first!
+    var books: [Book] {
+        Book.booksData
     }
     
     private init() {
-        let schema = Schema([Books.self])
+        let schema = Schema([Book.self])
         
         let modelConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         
@@ -37,7 +37,7 @@ class Data {
         }
         
         func insertData() {
-            for book in Books.booksData {
+            for book in Book.booksData {
                 context.insert(book)
             }
         }

@@ -33,7 +33,7 @@ class Book: Identifiable {
     }
     
     static let booksData = [
-        Books(
+        Book(
             title: "Beauty and the Monster",
             cover: "dune",
             audio: "Beauty and the Monster",
@@ -43,7 +43,7 @@ class Book: Identifiable {
             duration: 0,
             status:""
         ),
-        Books(
+        Book(
             title: "By the Sea",
             cover: "dune",
             audio: "By the Sea",
@@ -53,7 +53,7 @@ class Book: Identifiable {
             duration: 0,
             status:""
         ),
-        Books(
+        Book(
             title: "Morning in the West",
             cover: "dune",
             audio: "Morning in the West",
@@ -63,7 +63,7 @@ class Book: Identifiable {
             duration: 0,
             status:""
         ),
-        Books(
+        Book(
             title: "Tale of the Witch Doll",
             cover: "dune",
             audio: "Tale of the Witch Doll",
@@ -73,7 +73,7 @@ class Book: Identifiable {
             duration: 0,
             status:""
         ),
-        Books(
+        Book(
             title: "The Black Cat",
             cover: "dune",
             audio: "The Black Cat",

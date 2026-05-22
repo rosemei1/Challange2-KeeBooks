@@ -12,7 +12,7 @@ import SwiftData
 struct CompleteSubView: View {
     
     @Binding var chevron: Bool
-    @Query(sort: \Books.duration) private var books: [Books]
+    @Query(sort: \Book.duration) private var books: [Book]
     
     var array = Array(1...6)
     var body: some View {

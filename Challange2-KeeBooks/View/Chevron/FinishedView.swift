@@ -10,7 +10,7 @@ import SwiftData
 
 struct FinishedView: View {
     
-    @Query(sort: \Books.duration) private var books: [Books]
+    @Query(sort: \Book.duration) private var books: [Book]
 //    let items = Array(1...6)
     let columns = [
         GridItem(.flexible()),

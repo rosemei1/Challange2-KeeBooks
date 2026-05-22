@@ -11,7 +11,7 @@ import SwiftData
 struct OnGoingSubView: View {
     
     @Binding var chevron: Bool
-    @Query(sort: \Books.title) private var books: [Books]
+    @Query(sort: \Book.title) private var books: [Book]
     
     let columns = [
         GridItem(.flexible()),

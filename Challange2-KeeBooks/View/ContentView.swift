@@ -30,7 +30,7 @@ struct ContentView: View {
         .tint(.primary9)
         .task {
             if books.isEmpty {
-                for book in Books.booksData {
+                for book in Book.booksData {
                     modelContext.insert(book)
                 }
             }
