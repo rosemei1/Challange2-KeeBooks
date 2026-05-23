@@ -55,7 +55,7 @@ struct DetailView: View {
                             print("Test")
                         }
                         ButtonFilled(label: "Play", icon: "play.fill", width: 150) {
-                            print("Test")
+//                            print("Test")
                         }
                         
                     }

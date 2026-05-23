@@ -1,31 +1,37 @@
-//
-//  ButtonFilled.swift
-//  Challange2-KeeBooks
-//
-//  Created by Muhammad Alief Rahman Fardillah on 20/05/26.
-//
-
 import SwiftUI
 
-struct ButtonFilled: View {
+struct ButtonFilled<Destination: View>: View {
     
     var label: String
     var icon: String
     var width: CGFloat
-    var action: () -> Void = {}
+    
+    @ViewBuilder var destination: Destination
     
     var body: some View {
-        Button(label, systemImage: icon) {
-            action()
+        
+        NavigationLink {
+            destination
+        } label: {
+            
+            Label(label, systemImage: icon)
+                .foregroundStyle(.white)
+                .frame(width: width, height: 35)
+                .background(.primary9)
+                .glassEffect(.regular, in: .capsule)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
         }
-        .foregroundStyle(.white)
-        .frame(width: width, height: 35)
-        .background(.primary9)
-        .glassEffect(.regular, in: .capsule)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 }
 
 #Preview {
-    ButtonFilled(label: "Play", icon: "play.fill", width: 150)
+    NavigationStack {
+        ButtonFilled(
+            label: "Play",
+            icon: "play.fill",
+            width: 150
+        ) {
+            Text("Destination View")
+        }
+    }
 }
