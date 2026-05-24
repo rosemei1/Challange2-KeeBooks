@@ -9,8 +9,8 @@ import SwiftUI
 
 struct MediaPlayerView: View {
 
-    var book: Books
-
+    var book: Book
+    
     @Environment(\.dismiss) private var dismiss
 
     @StateObject private var player =
@@ -131,7 +131,7 @@ struct MediaPlayerView: View {
 
                         Button {
 
-                            if player.currentBook == nil {
+                            if player.currentBook?.id != book.id {
 
                                 player.play(book: book)
 
@@ -145,8 +145,8 @@ struct MediaPlayerView: View {
                             Image(
                                 systemName:
                                     player.isPlaying
-                                ? "pause.circle.fill"
-                                : "play.circle.fill"
+                                    ? "pause.circle.fill"
+                                    : "play.circle.fill"
                             )
                             .font(.system(size: 70))
                             .foregroundStyle(Color.primary9)
@@ -208,16 +208,5 @@ struct MediaPlayerView: View {
 }
 
 #Preview {
-    MediaPlayerView(
-        book: Books(
-            title: "Beauty and the Monster",
-            cover: "dune",
-            audio: "Beauty and the Monster",
-            author: "",
-            narrator: "",
-            synopsis: "",
-            duration: 0,
-            status:""
-        )
-    )
+    MediaPlayerView(book: Data.shared.books.first!)
 }

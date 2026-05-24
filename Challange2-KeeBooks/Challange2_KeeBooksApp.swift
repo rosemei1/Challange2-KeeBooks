@@ -15,6 +15,6 @@ struct Challange2_KeeBooksApp: App {
             ContentView()
                 .preferredColorScheme(.light)
         }
-        .modelContainer(for: [Books.self])
+        .modelContainer(for: Book.self)
     }
 }

@@ -58,7 +58,7 @@ final class NotificationManager:
     // MARK: - Send Notification
 
     func sendPlayNotification(
-        book: Books
+        book: Book
     ) {
 
         let content =

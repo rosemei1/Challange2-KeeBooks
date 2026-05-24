@@ -10,7 +10,7 @@ import SwiftData
 
 struct OnGoingView: View {
 //    let items = Array(1...6)
-    @Query(sort: \Books.title) private var books: [Books]
+    @Query(sort: \Book.title) private var books: [Book]
     let columns = [
         GridItem(.flexible()),
     ]

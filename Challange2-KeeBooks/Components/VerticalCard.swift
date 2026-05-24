@@ -9,21 +9,27 @@ import Foundation
 import SwiftUI
 
 struct VerticalCard: View {
-    @Bindable var book: Books
+    var book: Book
+
     var body: some View {
-        VStack{
+        VStack {
             Image(book.cover)
                 .resizable()
                 .frame(width: 90, height: 120)
-                .padding(.top,6)
+                .padding(.top, 6)
 
-            VStack (alignment: .center){
+            VStack(alignment: .center) {
                 Text(book.title)
                     .font(.default)
                     .bold()
+                    .foregroundStyle(.black)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
 
                 Text(book.author)
                     .font(.caption)
+                    .foregroundStyle(.gray)
+                    .lineLimit(1)
             }
             .frame(width: 130, height: 70)
         }
@@ -35,5 +41,5 @@ struct VerticalCard: View {
 
 
 #Preview {
-    VerticalCard(book: Books.booksData.first!)
+    VerticalCard(book: Data.shared.books[0])
 }

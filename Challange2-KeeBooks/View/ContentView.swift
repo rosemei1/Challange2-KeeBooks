@@ -10,13 +10,14 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Books.title) private var books: [Books]
+    @Query private var books: [Book]
 
     var body: some View {
         
         TabView {
             Tab("Home", systemImage: "house.fill") {
                 HomeView()
+                    .environment(\.modelContext, modelContext)
             }
             
             Tab("Library", systemImage: "books.vertical.fill") {
@@ -24,13 +25,13 @@ struct ContentView: View {
             }
             
             Tab("Activity", systemImage: "clock.fill") {
-                ActivitylView()
+                ActivityView()
             }
         }
         .tint(.primary9)
         .task {
             if books.isEmpty {
-                for book in Books.booksData {
+                for book in Book.booksData {
                     modelContext.insert(book)
                 }
             }
@@ -40,5 +41,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: [Books.self], inMemory: true)
+        .modelContainer(Data.shared.modelContainer)
 }

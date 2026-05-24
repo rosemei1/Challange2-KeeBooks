@@ -2,20 +2,11 @@ import SwiftUI
 import SwiftData
 
 struct LibraryView: View {
-//    private let dummyBook = Books(
-//        title: "The Book Title",
-//        cover: "dummyBookCover",
-//        audio: "sample.mp3",
-//        author: "Author Name",
-//        narrator: "Narrator",
-//        synopsis: "",
-//        duration: 3600,
-//        status: "unread"
-//    )
-    
-    @Query(sort: \Books.title) private var books: [Books]
-    @Environment(\.modelContext) private var context
-    
+    let columns = [
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+    ]
+
     var body: some View {
 //        let items = Array(1...6)
         let columns = [
@@ -24,10 +15,10 @@ struct LibraryView: View {
         ]
 
         NavigationStack {
-            ScrollView{
-                VStack{
-                    LazyVGrid(columns: columns, spacing: 16){
-                        ForEach(books){ book in
+            ScrollView {
+                VStack {
+                    LazyVGrid(columns: columns, spacing: 16) {
+                        ForEach(Book.booksData) { book in
                             NavigationLink(destination: DetailView(book: book)) {
                                 VerticalCard(book: book)
                             }

@@ -21,7 +21,7 @@ final class AudioPlayerManager:NSObject, ObservableObject {
 
     // MARK: - Published
 
-    @Published var currentBook: Books?
+    @Published var currentBook: Book?
 
     @Published var isPlaying = false
 
@@ -52,7 +52,7 @@ final class AudioPlayerManager:NSObject, ObservableObject {
 
     // MARK: - Play Full Audiobook
 
-    func play(book: Books) {
+    func play(book: Book) {
 
         cleanupPlayer()
 
@@ -89,7 +89,7 @@ final class AudioPlayerManager:NSObject, ObservableObject {
 
     // MARK: - Preview
 
-    func playPreview(book: Books) {
+    func playPreview(book: Book) {
 
         cleanupPlayer()
 
@@ -317,7 +317,7 @@ final class AudioPlayerManager:NSObject, ObservableObject {
 
     // MARK: - Now Playing
 
-    private func setupNowPlaying(book: Books) {
+    private func setupNowPlaying(book: Book) {
 
         var nowPlaying: [String: Any] = [
 

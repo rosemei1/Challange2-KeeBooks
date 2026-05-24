@@ -11,6 +11,7 @@ import SwiftUI
 struct Chevron: View {
     
     let title : String
+    @Binding var isDisabled: Bool
     var action: () -> Void = {}
 
     var body: some View {
@@ -23,7 +24,8 @@ struct Chevron: View {
                 }
                     .labelStyle(.iconOnly)
                     .font(.title)
-                    .foregroundStyle(.primary9)
+                    .foregroundStyle((isDisabled) ? Color.gray :.primary9)
+                    .disabled(isDisabled)
                 Spacer()
 
             }
@@ -33,5 +35,5 @@ struct Chevron: View {
 
 
 #Preview {
-    Chevron(title: "On going")
+    Chevron(title: "On going", isDisabled: .constant(true))
 }

@@ -9,41 +9,51 @@ import SwiftUI
 import SwiftData
 
 struct OnGoingSubView: View {
-    
+
     @Binding var chevron: Bool
-    @Query(sort: \Books.title) private var books: [Books]
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \Book.title) private var allBooks: [Book]
+    @Binding var isDisabled: Bool
     
-    let columns = [
-        GridItem(.flexible()),
-    ]
+//    var pickedBook: Book? {
+//        allBooks.first{$0.isPicked}
+//    }
+    
+    var ongoingBooks: [Book] {
+        allBooks.filter { $0.status == "ongoing" }
+    }
 
     var body: some View {
         VStack {
-            
-            HStack (){
-                Chevron(title: "On Going", action: {
+            HStack {
+                Chevron(title: "On Going", isDisabled: $isDisabled) {
                     chevron.toggle()
-                })
-
-            }
-            LazyVGrid(columns: columns) {
-                ForEach(books.prefix(3)) { book in
-                    HorizontalCard(book: book)
                 }
             }
-//            HorizontalCard()
-//            HorizontalCard()
+            
+            if !ongoingBooks.isEmpty {
+                ForEach(ongoingBooks.prefix(3)) { book in
+                    NavigationLink(destination: DetailView(book: book)) {
+                        HorizontalCard(book: book)
+                    }
+//                    .buttonStyle(.plain)
+                }
+            } else {
+                ContentUnavailableView("There is no ongoing book", systemImage: "books.vertical.fill", description: Text("You can start listening to an audiobook from library"))
+            }
+            
+
+            
         }
-        .navigationDestination(isPresented: $chevron, destination: {
+        .navigationDestination(isPresented: $chevron) {
             OnGoingView()
-        })
+        }
         .padding()
     }
 }
 
 
 #Preview {
-    OnGoingSubView(chevron: .constant(false))
+    OnGoingSubView(chevron: .constant(false), isDisabled: .constant(true))
         .modelContainer(Data.shared.modelContainer)
 }
-

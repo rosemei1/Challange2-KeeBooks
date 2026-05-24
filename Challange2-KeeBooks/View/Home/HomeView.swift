@@ -1,201 +1,250 @@
+//
+//  HomeView.swift
+//  Challange2-KeeBooks
+//
+//  Created by Muhammad Alief Rahman Fardillah on 23/05/26.
+//
+
 import SwiftUI
+import SwiftData
 
 struct HomeView: View {
     
     @State private var isPresented: Bool = false
     
+    @Environment(\.modelContext) private var modelContext
+    @Query private var allBooks: [Book]
+    
+    var pickedBook: Book {
+        allBooks.first {$0.isPicked}!
+    }
+    
     var body: some View {
-        GeometryReader { proxy in
-            NavigationStack {
-                ScrollView {
-                    
-                    VStack(spacing: 40){
-                        // MARK: - Title
+        NavigationStack {
+            ScrollView {
+                
+                // MARK: - First Section
+                VStack(alignment: .leading) {
+                    HStack {
+                        
+                        ZStack {
+                            Image(pickedBook.cover)
+                                .resizable()
+                                .frame(maxWidth: 165)
+                                .frame(height: 250)
+                                .background()
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                .padding(.top, 16)
+                                .blur(radius: 35)
+                                .opacity(0.7)
+                            
+                            Image(pickedBook.cover)
+                                .resizable()
+                                .scaledToFit()
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                .frame(maxWidth: 165)
+                                .padding(.top, 16)
+                        }
+                        
                         VStack(alignment: .leading) {
-                            Text("Home")
-                                .font(.largeTitle)
+                            Spacer()
+                            
+                            Text("Dune")
+                                .font(.title2)
                                 .fontWeight(.bold)
                                 .fontDesign(.rounded)
-                                .padding(.horizontal)
-                                .hidden()
+
+                            Text("Frank Herbert")
+                                .font(.body)
+                                .fontWeight(.ultraLight)
+                                .fontDesign(.rounded)
+
                             
-                            Spacer()
-                                .frame(height: 250)
-                                .background(Color.green)
+                            ProgressView(value: 0.7)
+                                .tint(.primary9)
+                                .padding(.bottom, 32)
                             
-                            // MARK: - Pick
-                            VStack(alignment: .leading, spacing: 6) {
-                                
-                                Text("Tonight's Pick")
-                                    .font(.largeTitle)
-                                    .fontWeight(.bold)
-                                    .fontDesign(.rounded)
-                                
-                                Text("Dune")
-                                    .font(.title)
-                                    .fontWeight(.bold)
-                                    .fontDesign(.rounded)
-                                
-                                Text("Frank Herbert")
-                                    .font(.title3)
-                                    .fontWeight(.thin)
-                                    .fontDesign(.rounded)
+                            ButtonFilled(label: "Change Picked Book", icon: "", width: 190) {
+                                OnGoingView()
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal)
-                            .padding(.vertical, 3)
-                            .background(
-                                LinearGradient(
-                                    colors: [
-                                        Color.white.opacity(0),
-                                        Color.white.opacity(0.95)
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
+                            Spacer(minLength: 10)
+
                         }
-                        .frame(minWidth: proxy.size.width)
-                        .padding(.top, proxy.safeAreaInsets.top)
-                        .padding(.leading, proxy.safeAreaInsets.leading)
-                        .padding(.trailing, proxy.safeAreaInsets.trailing)
-                        .frame(minHeight: 200)
-                        .background(alignment: .top) {
-                            ZStack {
-                                Image("dune")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(
-                                        width: proxy.size.width,
-                                        height: 465
-                                    )
-                                    .clipped()
-                                
-                                LinearGradient(
-                                    colors: [
-                                        Color.white.opacity(1),
-                                        Color.white.opacity(0.5),
-                                        Color.white.opacity(0.2),
-                                        Color.white.opacity(0.5),
-                                        Color.white.opacity(1)
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                                .frame(height: 465)
-                            }
-                            .ignoresSafeArea()
-                        }
-                        // MARK: - Second Section
-                        VStack(alignment: .leading){
-                            VStack{
-                                Text("Want to change the time?")
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .fontDesign(.rounded)
-                            }
-                            .frame(alignment: .leading)
-                            HStack(alignment: .top, spacing: 16) {
-                                
-                                // MARK: - Rings
-                                ZStack {
-                                    Circle()
-                                        .fill(Color.white)
-                                        .frame(width: 110, height: 110)
-                                        .shadow(radius: 5)
-                                    Circle()
-                                        .fill(.primary9)
-                                        .frame(width: 92, height: 92)
-                                    
-                                    Circle()
-                                        .fill(Color.white)
-                                        .frame(width: 74, height: 74)
-                                    Text("9:45")
-                                        .font(.title2)
-                                        .fontWeight(.bold)
-                                        .fontDesign(.rounded)
-                                        .foregroundStyle(.primary9)
-                                }.padding(.top, 26)
-                                
-                                // MARK: - Text
-                                VStack(alignment: .trailing, spacing: 14) {
-                                    Text("This will play automatically if you're still awake at 10:00 PM. We’ll remind you to put on your Apple Watch at 9:30 PM.")
-                                        .font(.body)
-                                        .fontDesign(.rounded)
-                                    
-                                    ButtonFilled(label: "Change Time", icon: "", width: 200) {
-                                        isPresented = !isPresented
-                                    }
-                                }
-                            }
-                            .padding(20)
-                            .background(
-                                RoundedRectangle(cornerRadius: 30)
-                                    .fill(Color.white)
-                                    .shadow(radius: 5)
-                            )
-                        }
-                        .frame(
-                            maxWidth: .infinity,
-                            maxHeight: .infinity
-                        )
-                        .padding(.horizontal)
                         
-                        // MARK: - Third Section
-                        VStack(alignment: .leading){
-                            VStack{
-                                Text("Connectivity")
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .fontDesign(.rounded)
-                            }
-                            .frame(alignment: .leading)
-                            HStack(alignment: .center, spacing: 16) {
-                                
-                                Image(systemName: "airplay.audio")
-                                    .font(.system(size: 50))
-                                    .foregroundStyle(.primary9)
-                                
-                                Text("Device is connected to alexa")
-                                    .font(.headline)
-                                    .fontWeight(.semibold)
-                                    .fontDesign(.rounded)
-                                
-                            }
-                            .padding(.vertical, 20)
-                            .padding(.horizontal, 35)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(Color.white)
-                                    .shadow(radius: 5)
-                            )
-                        }
-                        .frame(
-                            maxWidth: .infinity,
-                            maxHeight: .infinity
-                        )
-                        .padding(.horizontal)
+                        Spacer()
                     }
+                    .padding(.horizontal, 16)
+                    
+                    Text("Tonight's Pick")
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .fontDesign(.rounded)
+                        .padding(.top , 16)
+                        .padding(.leading, 16)
+                    
+                    Text("Will be automatically played tonight")
+                        .font(.body)
+                        .fontWeight(.ultraLight)
+                        .fontDesign(.rounded)
+                        .padding(.leading, 16)
+                    
+                        
                 }
-                .scrollBounceBehavior(.basedOnSize)
-                .scrollIndicators(.hidden)
-                .ignoresSafeArea(edges: [.top, .leading, .trailing])
-                .navigationTitle("Home")
-                .sheet(isPresented: $isPresented) {
-                    SettingTimeView()
+                .padding(.bottom, 16)
+                
+                Divider()
+                    .padding(.horizontal, 16)
+                
+                // MARK: - Second Section
+                VStack(alignment: .leading){
+                    VStack{
+                        Text("Want to change the time?")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .fontDesign(.rounded)
+                    }
+                    .frame(alignment: .leading)
+                    HStack(alignment: .top, spacing: 16) {
+                        
+                        // MARK: - Rings
+                        ZStack {
+                            Circle()
+                                .fill(Color.white)
+                                .frame(width: 110, height: 110)
+                                .shadow(radius: 5)
+                            Circle()
+                                .fill(.primary9)
+                                .frame(width: 92, height: 92)
+                            
+                            Circle()
+                                .fill(Color.white)
+                                .frame(width: 74, height: 74)
+                            Text("9:45")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .fontDesign(.rounded)
+                                .foregroundStyle(.primary9)
+                        }.padding(.top, 26)
+                        
+                        // MARK: - Text
+                        VStack(alignment: .trailing, spacing: 14) {
+                            Text("This will play automatically if you're still awake at 10:00 PM. We’ll remind you to put on your Apple Watch at 9:30 PM.")
+                                .font(.body)
+                                .fontDesign(.rounded)
+                            
+                            Button("Change Time") {
+                                isPresented = !isPresented
+                            }
+                            .foregroundStyle(.white)
+                            .frame(width: 200, height: 35)
+                            .background(.primary9)
+                            .glassEffect(.regular, in: .capsule)
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                        }
+                    }
+                    .padding(20)
+                    .background(
+                        RoundedRectangle(cornerRadius: 30)
+                            .fill(Color.white)
+                            .shadow(radius: 5)
+                    )
+                }
+                .frame(
+                    maxWidth: .infinity,
+                    maxHeight: .infinity
+                )
+                .padding(.horizontal)
+                .padding(.vertical, 16)
+                
+                Divider()
+                    .padding(.horizontal, 16)
+                
+                
+                // MARK: - Third Section
+                VStack(alignment: .leading){
+                    VStack{
+                        Text("Connectivity")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .fontDesign(.rounded)
+                    }
+                    .frame(alignment: .leading)
+                    HStack(alignment: .center, spacing: 16) {
+                        
+                        Image(systemName: "airplay.audio")
+                            .font(.system(size: 50))
+                            .foregroundStyle(.primary9)
+                        
+                        Text("Device is connected to alexa")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                        
+                    }
+                    .padding(.vertical, 20)
+                    .padding(.horizontal, 35)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color.white)
+                            .shadow(radius: 5)
+                    )
+                }
+                .frame(
+                    maxWidth: .infinity,
+                    maxHeight: .infinity
+                )
+                .padding(.horizontal)
+                .padding(.vertical, 16)
+            }
+            .background {
+                ZStack {
+                    Color.primary1
+                    Image("")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 406, height: 530)
+                        .background(.secondary1)
+                        .clipShape(.rect(bottomLeadingRadius: 42, bottomTrailingRadius: 42))
+                        .offset(y: -230)
                     
-                        .background(.ultraThinMaterial)
-                        .presentationBackground(.ultraThinMaterial)
-                        .presentationCornerRadius(40)
-                    
-                    
+                    LinearGradient(
+                        colors: [
+                            Color.primary1.opacity(0),
+                            Color.primary1.opacity(0.2),
+                            Color.primary1.opacity(0.9)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .clipShape(.rect(bottomLeadingRadius: 42, bottomTrailingRadius: 42))
+                    .offset(y: -230)
+                    .frame(height: 530)
                 }
             }
+            .navigationTitle("Home")
+            .navigationBarBackButtonHidden()
+            
+            .scrollBounceBehavior(.basedOnSize)
+            .scrollIndicators(.hidden)
+            .navigationTitle("Home")
+            .navigationBarBackButtonHidden()
+            .sheet(isPresented: $isPresented) {
+                SettingTimeView()
+                    .background(.ultraThinMaterial)
+                    .presentationBackground(.ultraThinMaterial)
+                    .presentationCornerRadius(40)
+                
+                
+            }
+            
         }
+        .padding(.top, -85)
     }
+    
 }
 
 #Preview {
     HomeView()
+        .modelContainer(Data.shared.modelContainer)
 }

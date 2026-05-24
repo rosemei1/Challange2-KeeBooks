@@ -6,110 +6,113 @@
 //
 
 import SwiftUI
+import _SwiftData_SwiftUI
 
 struct DetailView: View {
-
-    var book: Books
-
+    
+    @Bindable var book: Book
+    
     @State private var showPlayer = false
-
+    @Query private var allBooks: [Book]
+    
+    func pickBook (_ book: Book) {
+        for b in allBooks {
+            b.isPicked = false
+        }
+        book.isPicked = true
+    }
+    
+    var formattedDuration: String {
+        let duration = Duration.seconds(book.duration)
+        return duration.formatted(.time(pattern: .hourMinuteSecond))
+    }
+    
     var body: some View {
-
+        
         NavigationStack {
-
+            
             ScrollView {
-
+                
                 VStack {
-
                     Image(book.cover)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 202, height: 308)
                         .background(.gray)
                         .padding(.top, 50)
+                        .padding(.horizontal, 16)
                         .shadow(radius: 30)
-
+                    
                     VStack {
-
+                        
                         Text(book.title)
-                            .font(.title2)
-                            .bold()
-
-                        Text(book.author)
+                            .font(.title2).bold()
+                        
+                        Text("Author: \(book.author)")
                             .font(.caption)
                             .fontWeight(.light)
                             .foregroundStyle(.secondary)
-
-                        Text(book.narrator)
+                        
+                        Text("Narrator: \(book.narrator)")
                             .font(.caption)
                             .fontWeight(.light)
                             .foregroundStyle(.secondary)
-
-                        Text(book.duration.description)
+                        
+                        Text("Duration: \(formattedDuration)")
                             .font(.caption)
                             .fontWeight(.light)
                             .foregroundStyle(.secondary)
                     }
-
+                    
                     HStack {
-
-                        ButtonFilled(
-                            label: "Play",
-                            icon: "play.fill",
-                            width: 150
-                        ) {
-
+                        
+                        Button {
                             showPlayer = true
+                        } label: {
+                            Label("Play", systemImage: "play.fill")
+                                .foregroundStyle(.white)
+                                .frame(width: 150, height: 35)
+                                .background(.primary9)
+                                .glassEffect(.regular, in: .capsule)
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
                         }
-
+                        
                         ButtonOutlined(
                             label: "Pick",
-                            icon: "hand.tap.fill"
+                            icon: book.isPicked
+                                ? "checkmark.circle.fill"
+                                : "plus.circle"
                         ) {
-
-                            print("Test")
+                            pickBook(book)
                         }
                     }
-
-                    VStack(alignment: .leading) {
-
-                        Text("Synopsis:")
+                    VStack {
+                        Text("Synopsis")
                             .font(.headline)
                             .bold()
                             .padding(.top, 16)
-
+                        
                         Text(book.synopsis)
                             .font(.body)
+                            .multilineTextAlignment(.center)
                             .foregroundStyle(.secondary)
                     }
                     .padding(.horizontal, 32)
                 }
+                .scrollIndicators(.hidden)
+                .background {
+                    Color.primary1
+                    BackgroundView()
+                }
+                .sheet(isPresented: $showPlayer) {
+                    
+                    MediaPlayerView(book: book)
+                }
             }
-            .background {
-
-                Color.primary1
-
-                BackgroundView()
-            }
-            .sheet(isPresented: $showPlayer) {
-
-                MediaPlayerView(book: book)
-            }
+            .background(Color.primary1)
         }
     }
 }
 
 #Preview {
-    DetailView(
-        book: Books(
-            title: "The Hunger Game",
-            cover: "dune",
-            audio: "sample.mp3",
-            author: "Suzanne Collins",
-            narrator: "The Assasins",
-            synopsis: "",
-            duration: 3351,
-            status: "unread"
-        )
-    )
+    DetailView(book: Data.shared.books.first!)
 }
