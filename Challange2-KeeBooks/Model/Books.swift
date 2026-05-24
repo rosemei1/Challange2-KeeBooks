@@ -18,9 +18,9 @@ class Books {
     var synopsis: String
     var duration: Int
     var status: String
-    var bookmark: Int? = nil
+    var bookmark: Double? = nil
     
-    init(title: String, cover: String, audio: String, author: String, narrator: String, synopsis: String, duration: Int, status: String, bookmark: Int? = nil) {
+    init(title: String, cover: String, audio: String, author: String, narrator: String, synopsis: String, duration: Int, status: String, bookmark: Double? = nil) {
         self.title = title
         self.cover = cover
         self.audio = audio
