@@ -178,31 +178,7 @@ struct MediaPlayerView: View {
                 )
             )
             .padding(.horizontal, 16)
-            .shadow(
-                color: .black.opacity(0.25),
-                radius: 20,
-                x: 0,
-                y: 8
-            )
-        }
-        .navigationTitle("Player")
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-
-            ToolbarItem(
-                placement: .navigationBarLeading
-            ) {
-
-                Button {
-
-                    dismiss()
-
-                } label: {
-
-                    Image(systemName: "chevron.left")
-                }
-            }
+            
         }
     }
 }
