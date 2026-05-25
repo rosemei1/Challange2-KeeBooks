@@ -150,13 +150,41 @@ final class SleepManager: ObservableObject {
 
     private func isSleepTime() -> Bool {
 
-        let hour =
-            Calendar.current.component(
-                .hour,
-                from: Date()
+        let calendar = Calendar.current
+
+        let now = Date()
+
+        let sleepDate =
+            Date(timeIntervalSince1970: sleepTimeInterval)
+
+        let nowComponents =
+            calendar.dateComponents(
+                [.hour, .minute],
+                from: now
             )
 
-        return Double(hour) >= sleepTimeInterval
+        let sleepComponents =
+            calendar.dateComponents(
+                [.hour, .minute],
+                from: sleepDate
+            )
+
+        let currentMinutes =
+            (nowComponents.hour ?? 0) * 60 +
+            (nowComponents.minute ?? 0)
+
+        let sleepMinutes =
+            (sleepComponents.hour ?? 0) * 60 +
+            (sleepComponents.minute ?? 0)
+
+
+        if sleepMinutes > 720 {
+
+            return currentMinutes >= sleepMinutes ||
+                   currentMinutes <= 360
+        }
+
+        return currentMinutes >= sleepMinutes
     }
 
     // MARK: - Heart Rate
@@ -295,9 +323,9 @@ final class SleepManager: ObservableObject {
                     """
                     User Probably Sleeping
 
-                    HR: \(Int(bpm))
+                    HR: \(Int(bpm)) = \(bpm <= (70 * 0.85))
                     Still Count:
-                    \(self.lowMovementCount)
+                    \(self.lowMovementCount) = \(self.lowMovementCount >= 30)
                     """
 
                     AudioPlayerManager
@@ -328,9 +356,9 @@ final class SleepManager: ObservableObject {
                     """
                     User Awake
 
-                    HR: \(Int(bpm))
+                    HR: \(Int(bpm)) = \(bpm <= (70 * 0.85))
                     Still Count:
-                    \(self.lowMovementCount)
+                    \(self.lowMovementCount) = \(self.lowMovementCount >= 30)
 
                     SleepTime:
                     \(self.formattedSleepTime) = \(self.isSleepTime())

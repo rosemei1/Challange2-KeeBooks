@@ -43,8 +43,6 @@ struct ContentView: View {
                 .tint(.primary9)
                 
                 .task {
-                    
-                    // Insert sample data
                     if books.isEmpty {
                         
                         for book in Book.booksData {
@@ -52,6 +50,7 @@ struct ContentView: View {
                             modelContext.insert(book)
                         }
                     }
+                    NotificationManager.shared.setupActions()
                     
                     await NotificationManager.shared
                         .requestPermission()
