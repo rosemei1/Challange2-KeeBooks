@@ -6,6 +6,22 @@ import Combine
 
 @MainActor
 final class SleepManager: ObservableObject {
+    
+    @AppStorage("sleepTime")
+    private var sleepTimeInterval: Double = 0
+    
+    var formattedSleepTime: String {
+
+        let date =
+            Date(timeIntervalSince1970: sleepTimeInterval)
+
+        let formatter =
+            DateFormatter()
+
+        formatter.timeStyle = .short
+
+        return formatter.string(from: date)
+    }
 
     static let shared = SleepManager()
 
@@ -124,7 +140,7 @@ final class SleepManager: ObservableObject {
 
     // MARK: - Night Time Check
 
-    private func isNightTime() -> Bool {
+    private func isSleepTime() -> Bool {
 
         let hour =
             Calendar.current.component(
@@ -132,7 +148,7 @@ final class SleepManager: ObservableObject {
                 from: Date()
             )
 
-        return hour >= 22 || hour <= 6
+        return Double(hour) >= sleepTimeInterval
     }
 
     // MARK: - Heart Rate
@@ -262,7 +278,7 @@ final class SleepManager: ObservableObject {
 
                 let sleeping =
                     self.lowMovementCount >= 30 &&
-                    self.isNightTime() &&
+                    self.isSleepTime() &&
                 bpm <= (70 * 0.15)
 
                 if sleeping {
@@ -292,8 +308,8 @@ final class SleepManager: ObservableObject {
                     Still Count:
                     \(self.lowMovementCount)
 
-                    Night:
-                    \(self.isNightTime())
+                    SleepTime:
+                    \(self.formattedSleepTime) = \(self.isSleepTime())
                     """
                 }
             }
