@@ -25,6 +25,17 @@ struct HomeView: View {
         allBooks.first {$0.isPicked}!
     }
     
+    private var progressValue: Double {
+
+        let duration =
+            Double(max(pickedBook.duration, 1))
+
+        let bookmark =
+            Double(pickedBook.bookmark ?? 0)
+
+        return min(max(bookmark / duration, 0), 1)
+    }
+    
     var formattedSleepTime: String {
 
         let date =
@@ -95,12 +106,12 @@ struct HomeView: View {
                                 .fontDesign(.rounded)
 
                             
-                            ProgressView(value: (pickedBook.bookmark ?? 0)/pickedBook.duration)
+                            ProgressView(value: progressValue)
                                 .tint(.primary9)
                                 .padding(.bottom, 32)
                             
                             ButtonFilled(label: "Change Picked Book", icon: "", width: 190) {
-                                OnGoingView()
+                                OnGoingView(title: "Change Book", isOnGoingPage: false)
                             }
                             Spacer(minLength: 10)
 
@@ -301,6 +312,8 @@ struct HomeView: View {
     }
     
 }
+
+
 
 #Preview {
     HomeView()
