@@ -3,12 +3,20 @@ import HealthKit
 import CoreMotion
 import SwiftUI
 import Combine
+import SwiftData
 
 @MainActor
 final class SleepManager: ObservableObject {
     
     @AppStorage("sleepTime")
     private var sleepTimeInterval: Double = 0
+    
+//    @Query private var allBooks: [Book]
+    
+//    var pickedBook: Book? {
+//        allBooks.first {$0.isPicked}
+//    }
+    var pickedBook: Book?
     
     var formattedSleepTime: String {
 
@@ -279,7 +287,7 @@ final class SleepManager: ObservableObject {
                 let sleeping =
                     self.lowMovementCount >= 30 &&
                     self.isSleepTime() &&
-                bpm <= (70 * 0.15)
+                bpm <= (70 * 0.85)
 
                 if sleeping {
 
@@ -299,6 +307,22 @@ final class SleepManager: ObservableObject {
                     self.stopMonitoring()
 
                 } else {
+                    if let pickedBook = self.pickedBook {
+                        NotificationManager.shared.scheduleSleepNotification(book: pickedBook)
+                    } else {
+                        NotificationManager.shared.scheduleSleepNotification(book: Book(
+                            title: "Beauty and the Monster",
+                            cover: "BookCover-TheBeautyAndTheMonster",
+                            audio: "Beauty and the Monster",
+                            author: "Stéphanie-Félicité de Genlis",
+                            narrator: "Mary Kay",
+                            synopsis: "A French theatrical adaptation of the famous fairy tale, The Beauty and the Monster is a drama of three characters - Beauty (Sabina), the Beast (Phanor) and Beauty's best friend, Phedima (the third wheel). - Summary by Mary Kay",
+                            duration: 491,
+                            status:"ongoing",
+                            bookmark: 200,
+                        ))
+                    }
+                    
 
                     self.sleepText =
                     """
