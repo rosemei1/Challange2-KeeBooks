@@ -21,7 +21,9 @@ struct OnGoingView: View {
                 VStack{
                     LazyVGrid(columns: columns, spacing: 16){
                         ForEach(books){ book in
-                            HorizontalCard(book: book)
+                            NavigationLink(destination: DetailView(book: book)) {
+                                HorizontalCard(book: book)
+                            }
                         }
                     }
                 }

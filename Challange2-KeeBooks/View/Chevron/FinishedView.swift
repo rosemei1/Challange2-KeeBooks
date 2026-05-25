@@ -23,7 +23,9 @@ struct FinishedView: View {
                 VStack{
                     LazyVGrid(columns: columns, spacing: 16){
                         ForEach(books){ book in
-                            VerticalCard(book: book)
+                            NavigationLink(destination: DetailView(book: book)) {
+                                VerticalCard(book: book)
+                            }
                         }
                     }
                 }

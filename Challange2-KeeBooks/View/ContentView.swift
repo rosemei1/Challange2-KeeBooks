@@ -11,9 +11,20 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var books: [Book]
+    @StateObject var sleepManager = SleepManager.shared
 
     var body: some View {
-        
+        Text(sleepManager.sleepText)
+
+                    Button("Start Sleep Detection") {
+
+                        sleepManager.requestAuthorization()
+                    }
+
+                    Button("Check Latest Sleep Stage") {
+
+                        sleepManager.fetchLatestSleepStage()
+                    }
         TabView {
             Tab("Home", systemImage: "house.fill") {
                 HomeView()
@@ -35,7 +46,11 @@ struct ContentView: View {
                     modelContext.insert(book)
                 }
             }
+//            await SleepManager.shared.requestAuthorization()
+            await NotificationManager.shared.requestPermission()
+
         }
+        
     }
 }
 

@@ -1,133 +1,349 @@
 import Foundation
 import HealthKit
+import CoreMotion
+import SwiftUI
 import Combine
 
 @MainActor
-final class SleepManager:
-    ObservableObject {
+final class SleepManager: ObservableObject {
 
     static let shared = SleepManager()
 
+    // MARK: - HealthKit
+
     private let healthStore = HKHealthStore()
+
+    // MARK: - Motion
+
+    private let motionManager =
+        CMMotionActivityManager()
+
+    // MARK: - Timer
 
     private var monitoringTimer: Timer?
 
-    // MARK: - Request Permission
+    // MARK: - Published UI
 
-    func requestAuthorization() async {
+    @Published var sleepText =
+        "Not Monitoring"
+
+    // MARK: - State
+
+    private var lowMovementCount = 0
+
+    private var latestHeartRate: Double = 0
+
+    private init() {}
+
+    // MARK: - Authorization
+
+    func requestAuthorization() {
 
         guard HKHealthStore
             .isHealthDataAvailable()
         else {
+
+            sleepText =
+                "HealthKit unavailable"
+
             return
         }
 
-        guard let sleepType =
+        let readTypes: Set<HKObjectType> = [
+
             HKObjectType.categoryType(
                 forIdentifier: .sleepAnalysis
-            )
-        else {
-            return
-        }
+            )!,
 
-        do {
+            HKObjectType.quantityType(
+                forIdentifier: .heartRate
+            )!
+        ]
 
-            try await healthStore
-                .requestAuthorization(
-                    toShare: [],
-                    read: [sleepType]
-                )
+        healthStore.requestAuthorization(
+            toShare: [],
+            read: readTypes
+        ) { success, error in
 
-        } catch {
+            DispatchQueue.main.async {
 
-            print(error.localizedDescription)
-        }
-    }
+                if let error = error {
 
-    // MARK: - Start Monitoring
+                    self.sleepText =
+                        error.localizedDescription
 
-    func startMonitoringSleep() {
+                    return
+                }
 
-        monitoringTimer?.invalidate()
+                if success {
 
-        monitoringTimer = Timer.scheduledTimer(
-            withTimeInterval: 60,
-            repeats: true
-        ) { _ in
+                    self.sleepText =
+                        "Permission Granted"
 
-            Task {
+                    self.startMonitoring()
 
-                let sleeping =
-                    await self.isUserSleeping()
+                } else {
 
-                if sleeping {
-
-                    AudioPlayerManager
-                        .shared
-                        .stopBecauseUserFellAsleep()
+                    self.sleepText =
+                        "Permission Denied"
                 }
             }
         }
     }
 
+    // MARK: - Start Monitoring
+
+    func startMonitoring() {
+
+        monitoringTimer?.invalidate()
+
+        sleepText =
+            "Monitoring Sleep..."
+
+        monitoringTimer =
+            Timer.scheduledTimer(
+                withTimeInterval: 10,
+                repeats: true
+            ) { _ in
+
+                self.checkSleepState()
+            }
+    }
+
     // MARK: - Stop Monitoring
 
-    func stopMonitoringSleep() {
+    func stopMonitoring() {
 
         monitoringTimer?.invalidate()
 
         monitoringTimer = nil
+
+        sleepText =
+            "Monitoring Stopped"
     }
 
-    // MARK: - Sleep Check
+    // MARK: - Night Time Check
 
-    func isUserSleeping() async -> Bool {
+    private func isNightTime() -> Bool {
+
+        let hour =
+            Calendar.current.component(
+                .hour,
+                from: Date()
+            )
+
+        return hour >= 22 || hour <= 6
+    }
+
+    // MARK: - Heart Rate
+
+    func fetchHeartRate(
+        completion: @escaping (Double) -> Void
+    ) {
+
+        guard let heartRateType =
+            HKQuantityType.quantityType(
+                forIdentifier: .heartRate
+            )
+        else {
+            return
+        }
+
+        let query = HKSampleQuery(
+            sampleType: heartRateType,
+            predicate: nil,
+            limit: 1,
+            sortDescriptors: [
+
+                NSSortDescriptor(
+                    key: HKSampleSortIdentifierEndDate,
+                    ascending: false
+                )
+            ]
+        ) { _, samples, error in
+
+            guard error == nil else {
+                return
+            }
+
+            guard let sample =
+                samples?.first
+                    as? HKQuantitySample
+            else {
+                return
+            }
+
+            let unit =
+                HKUnit.count()
+                    .unitDivided(
+                        by: HKUnit.minute()
+                    )
+
+            let bpm =
+                sample.quantity.doubleValue(
+                    for: unit
+                )
+
+            DispatchQueue.main.async {
+
+                self.latestHeartRate = bpm
+
+                completion(bpm)
+            }
+        }
+
+        healthStore.execute(query)
+    }
+
+    // MARK: - Sleep Detection
+
+    func checkSleepState() {
+
+        guard CMMotionActivityManager
+            .isActivityAvailable()
+        else {
+
+            sleepText =
+                "Motion unavailable"
+
+            return
+        }
+
+        let now = Date()
+
+        let startDate =
+            Calendar.current.date(
+                byAdding: .minute,
+                value: -1,
+                to: now
+            )!
+
+        motionManager.queryActivityStarting(
+            from: startDate,
+            to: now,
+            to: .main
+        ) { activities, error in
+
+            if let error = error {
+
+                self.sleepText =
+                    error.localizedDescription
+
+                return
+            }
+
+            guard let activity =
+                activities?.last
+            else {
+
+                self.sleepText =
+                    "No motion data"
+
+                return
+            }
+
+            // MARK: - Movement Check
+
+            let noMovement =
+                activity.stationary
+
+            if noMovement {
+
+                self.lowMovementCount += 1
+
+            } else {
+
+                self.lowMovementCount = 0
+            }
+
+            // MARK: - Fetch Heart Rate
+
+            self.fetchHeartRate { bpm in
+
+                let sleeping =
+                    self.lowMovementCount >= 30 &&
+                    self.isNightTime() &&
+                bpm <= (70 * 0.15)
+
+                if sleeping {
+
+                    self.sleepText =
+                    """
+                    User Probably Sleeping
+
+                    HR: \(Int(bpm))
+                    Still Count:
+                    \(self.lowMovementCount)
+                    """
+
+                    AudioPlayerManager
+                        .shared
+                        .stopBecauseUserFellAsleep()
+
+                    self.stopMonitoring()
+
+                } else {
+
+                    self.sleepText =
+                    """
+                    User Awake
+
+                    HR: \(Int(bpm))
+                    Still Count:
+                    \(self.lowMovementCount)
+
+                    Night:
+                    \(self.isNightTime())
+                    """
+                }
+            }
+        }
+    }
+
+    // MARK: - Latest Sleep Stage
+
+    func fetchLatestSleepStage() {
 
         guard let sleepType =
             HKObjectType.categoryType(
                 forIdentifier: .sleepAnalysis
             )
         else {
-
-            return false
+            return
         }
 
-        return await withCheckedContinuation {
-            continuation in
+        let sortDescriptor =
+            NSSortDescriptor(
+                key: HKSampleSortIdentifierEndDate,
+                ascending: false
+            )
 
-            let startDate =
-                Calendar.current.date(
-                    byAdding: .hour,
-                    value: -12,
-                    to: Date()
-                ) ?? Date()
+        let query = HKSampleQuery(
+            sampleType: sleepType,
+            predicate: nil,
+            limit: 1,
+            sortDescriptors: [
+                sortDescriptor
+            ]
+        ) { _, samples, error in
 
-            let predicate =
-                HKQuery.predicateForSamples(
-                    withStart: startDate,
-                    end: Date()
-                )
+            DispatchQueue.main.async {
 
-            let query = HKSampleQuery(
-                sampleType: sleepType,
-                predicate: predicate,
-                limit: 1,
-                sortDescriptors: [
-                    NSSortDescriptor(
-                        key: HKSampleSortIdentifierEndDate,
-                        ascending: false
-                    )
-                ]
-            ) { _, samples, _ in
+                if let error = error {
+
+                    self.sleepText =
+                        error.localizedDescription
+
+                    return
+                }
 
                 guard let sample =
                     samples?.first
                         as? HKCategorySample
                 else {
 
-                    continuation.resume(
-                        returning: false
-                    )
+                    self.sleepText =
+                        "No sleep data"
 
                     return
                 }
@@ -139,24 +355,35 @@ final class SleepManager:
 
                 switch value {
 
-                case .asleep,
-                     .asleepCore,
-                     .asleepREM,
-                     .asleepDeep:
+                case .awake:
+                    self.sleepText = "Awake"
 
-                    continuation.resume(
-                        returning: true
-                    )
+                case .asleep:
+                    self.sleepText = "Asleep"
+
+                case .asleepCore:
+                    self.sleepText =
+                        "Core Sleep"
+
+                case .asleepDeep:
+                    self.sleepText =
+                        "Deep Sleep"
+
+                case .asleepREM:
+                    self.sleepText =
+                        "REM Sleep"
+
+                case .inBed:
+                    self.sleepText =
+                        "In Bed"
 
                 default:
-
-                    continuation.resume(
-                        returning: false
-                    )
+                    self.sleepText =
+                        "Unknown"
                 }
             }
-
-            healthStore.execute(query)
         }
+
+        healthStore.execute(query)
     }
 }
