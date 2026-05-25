@@ -32,7 +32,7 @@ struct OnGoingSubView: View {
             }
             
             if !ongoingBooks.isEmpty {
-                ForEach(ongoingBooks.prefix(3)) { book in
+                ForEach(allBooks.filter { $0.status == "ongoing"}.prefix(3)) { book in
                     NavigationLink(destination: DetailView(book: book)) {
                         HorizontalCard(book: book)
                     }

@@ -30,7 +30,7 @@ struct CompleteSubView: View {
             ScrollView (.horizontal){
                 HStack{
                     if !completedBook.isEmpty {
-                        ForEach(completedBook) { book in
+                        ForEach(completedBook.prefix(3)) { book in
                             //                        VerticalCard(book: book)
                             NavigationLink(destination: DetailView(book: book)) {
                                VerticalCard(book: book)

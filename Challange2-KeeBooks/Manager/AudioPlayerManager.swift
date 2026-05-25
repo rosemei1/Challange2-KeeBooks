@@ -72,13 +72,21 @@ final class AudioPlayerManager:NSObject, ObservableObject {
 
         setupTimeObserver()
 
-        // Resume from bookmark
-        let bookmarkTime = CMTime(
-            seconds: book.bookmark ?? 0,
+        // Determine playback start time
+        let startTime: Double
+
+        if book.status == "completed" {
+            startTime = 0
+        } else {
+            startTime = book.bookmark ?? 0
+        }
+
+        let seekTime = CMTime(
+            seconds: startTime,
             preferredTimescale: 600
         )
 
-        player?.seek(to: bookmarkTime)
+        player?.seek(to: seekTime)
 
         player?.play()
 
