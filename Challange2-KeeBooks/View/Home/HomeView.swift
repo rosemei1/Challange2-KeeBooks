@@ -10,6 +10,12 @@ import SwiftData
 
 struct HomeView: View {
     
+    @AppStorage("sleepTime")
+    private var sleepTimeInterval: Double = 0
+    
+    @AppStorage("notificationBefore")
+    private var notificationBefore: Double = 15
+    
     @State private var isPresented: Bool = false
     
     @Environment(\.modelContext) private var modelContext
@@ -17,6 +23,35 @@ struct HomeView: View {
     
     var pickedBook: Book {
         allBooks.first {$0.isPicked}!
+    }
+    
+    var formattedSleepTime: String {
+
+        let date =
+            Date(timeIntervalSince1970: sleepTimeInterval)
+
+        let formatter =
+            DateFormatter()
+
+        formatter.timeStyle = .short
+
+        return formatter.string(from: date)
+    }
+    
+    var reminderTime: String {
+
+        let sleepDate =
+            Date(timeIntervalSince1970: sleepTimeInterval)
+
+        let reminderDate =
+            sleepDate.addingTimeInterval(
+                TimeInterval(-notificationBefore * 60)
+            )
+
+        return reminderDate.formatted(
+            date: .omitted,
+            time: .shortened
+        )
     }
     
     var body: some View {
@@ -49,18 +84,18 @@ struct HomeView: View {
                         VStack(alignment: .leading) {
                             Spacer()
                             
-                            Text("Dune")
+                            Text(pickedBook.title)
                                 .font(.title2)
                                 .fontWeight(.bold)
                                 .fontDesign(.rounded)
 
-                            Text("Frank Herbert")
+                            Text(pickedBook.author)
                                 .font(.body)
                                 .fontWeight(.ultraLight)
                                 .fontDesign(.rounded)
 
                             
-                            ProgressView(value: 0.7)
+                            ProgressView(value: (pickedBook.bookmark ?? 0)/pickedBook.duration)
                                 .tint(.primary9)
                                 .padding(.bottom, 32)
                             
@@ -119,7 +154,7 @@ struct HomeView: View {
                             Circle()
                                 .fill(Color.white)
                                 .frame(width: 74, height: 74)
-                            Text("9:45")
+                            Text(formattedSleepTime)
                                 .font(.title2)
                                 .fontWeight(.bold)
                                 .fontDesign(.rounded)
@@ -128,7 +163,7 @@ struct HomeView: View {
                         
                         // MARK: - Text
                         VStack(alignment: .trailing, spacing: 14) {
-                            Text("This will play automatically if you're still awake at 10:00 PM. We’ll remind you to put on your Apple Watch at 9:30 PM.")
+                            Text("This will play automatically if you're still awake at \(formattedSleepTime). We’ll remind you to put on your Apple Watch at \(reminderTime).")
                                 .font(.body)
                                 .fontDesign(.rounded)
                             
@@ -236,6 +271,29 @@ struct HomeView: View {
                     .presentationCornerRadius(40)
                 
                 
+            }
+            .onAppear {
+
+                NotificationManager.shared
+                    .onPlayAudiobook = {
+
+                        AudioPlayerManager.shared.play(
+                            book: pickedBook
+                        )
+                    }
+
+                NotificationManager.shared
+                    .scheduleSleepNotification(
+                        book: pickedBook
+                    )
+            }
+
+            .onChange(of: sleepTimeInterval) {
+
+                NotificationManager.shared
+                    .scheduleSleepNotification(
+                        book: pickedBook
+                    )
             }
             
         }

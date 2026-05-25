@@ -1,3 +1,8 @@
+//
+//  NotificationManager.swift
+//  Challange2-KeeBooks
+//
+
 import Foundation
 import UserNotifications
 import Combine
@@ -9,6 +14,9 @@ final class NotificationManager:
     UNUserNotificationCenterDelegate {
 
     static let shared = NotificationManager()
+
+    // CALLBACK
+    var onPlayAudiobook: (() -> Void)?
 
     // MARK: - Request Permission
 
@@ -32,35 +40,83 @@ final class NotificationManager:
         }
     }
 
-    // MARK: - Setup Actions
+    // MARK: - Setup Notification Actions
 
     func setupActions() {
 
+        // PLAY BUTTON
         let playAction =
             UNNotificationAction(
                 identifier: "PLAY_AUDIOBOOK",
                 title: "Play"
             )
 
+        // NO BUTTON
+        let noAction =
+            UNNotificationAction(
+                identifier: "DISMISS_AUDIOBOOK",
+                title: "No"
+            )
+
+        // CATEGORY
         let category =
             UNNotificationCategory(
                 identifier: "AUDIOBOOK_CATEGORY",
-                actions: [playAction],
+                actions: [
+                    playAction,
+                    noAction
+                ],
                 intentIdentifiers: []
             )
 
+        // REGISTER CATEGORY
         UNUserNotificationCenter.current()
             .setNotificationCategories(
                 [category]
             )
+
+        // SET DELEGATE
+        UNUserNotificationCenter.current()
+            .delegate = self
     }
 
-    // MARK: - Send Notification
+    // MARK: - Schedule Sleep Notification
 
-    func sendPlayNotification(
+    func scheduleSleepNotification(
         book: Book
     ) {
 
+        // REMOVE OLD NOTIFICATION
+        UNUserNotificationCenter.current()
+            .removePendingNotificationRequests(
+                withIdentifiers: [
+                    "sleepReminder"
+                ]
+            )
+
+        // GET SAVED SLEEP TIME
+        let sleepTimeInterval =
+            UserDefaults.standard.double(
+                forKey: "sleepTime"
+            )
+
+        let sleepDate =
+            Date(
+                timeIntervalSince1970:
+                    sleepTimeInterval
+            )
+
+        // EXTRACT HOUR & MINUTE
+        let components =
+            Calendar.current.dateComponents(
+                [
+                    .hour,
+                    .minute
+                ],
+                from: sleepDate
+            )
+
+        // CONTENT
         let content =
             UNMutableNotificationContent()
 
@@ -70,29 +126,66 @@ final class NotificationManager:
         content.body =
             "Continue listening to \(book.title)?"
 
-        content.sound = .default
+        content.sound =
+            .default
 
         content.categoryIdentifier =
             "AUDIOBOOK_CATEGORY"
 
-        content.userInfo = [
-            "bookTitle": book.title
-        ]
-
+        // TRIGGER
         let trigger =
-            UNTimeIntervalNotificationTrigger(
-                timeInterval: 1,
-                repeats: false
+            UNCalendarNotificationTrigger(
+                dateMatching: components,
+                repeats: true
             )
 
+        // REQUEST
         let request =
             UNNotificationRequest(
-                identifier: UUID().uuidString,
+                identifier: "sleepReminder",
                 content: content,
                 trigger: trigger
             )
 
+        // SCHEDULE
         UNUserNotificationCenter.current()
             .add(request)
+    }
+
+    // MARK: - Notification Actions
+
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse
+    ) async {
+
+        switch response.actionIdentifier {
+
+        case "PLAY_AUDIOBOOK":
+
+            print("Play audiobook tapped")
+
+            onPlayAudiobook?()
+
+        case "DISMISS_AUDIOBOOK":
+
+            print("No tapped")
+
+        default:
+            break
+        }
+    }
+
+    // MARK: - Show Notification While App Open
+
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+
+        return [
+            .banner,
+            .sound
+        ]
     }
 }

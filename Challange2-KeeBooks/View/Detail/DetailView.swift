@@ -106,6 +106,8 @@ struct DetailView: View {
                 .sheet(isPresented: $showPlayer) {
                     
                     MediaPlayerView(book: book)
+                        .presentationDetents([.large])
+                        .presentationDragIndicator(.visible)
                 }
             }
             .background(Color.primary1)
