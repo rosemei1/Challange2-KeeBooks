@@ -22,7 +22,7 @@ struct FinishedView: View {
             ScrollView{
                 VStack{
                     LazyVGrid(columns: columns, spacing: 16){
-                        ForEach(books){ book in
+                        ForEach(books.filter { $0.status == "completed" }){ book in
                             NavigationLink(destination: DetailView(book: book)) {
                                 VerticalCard(book: book)
                             }
@@ -30,7 +30,7 @@ struct FinishedView: View {
                     }
                 }
             }
-            .navigationTitle("Finished")
+            .navigationTitle("Completed")
             .navigationBarTitleDisplayMode(.inline)
             .background {
                 BackgroundView()

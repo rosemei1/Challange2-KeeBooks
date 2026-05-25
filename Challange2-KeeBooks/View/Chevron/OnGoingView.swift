@@ -20,7 +20,8 @@ struct OnGoingView: View {
             ScrollView{
                 VStack{
                     LazyVGrid(columns: columns, spacing: 16){
-                        ForEach(books){ book in
+                
+                        ForEach(books.filter { $0.status == "ongoing" }){ book in
                             NavigationLink(destination: DetailView(book: book)) {
                                 HorizontalCard(book: book)
                             }
