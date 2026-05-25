@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct SetPreferenceView: View {
+    
+    @AppStorage("isFirstTime") var isFirstTime = true
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -17,11 +20,12 @@ struct SetPreferenceView: View {
                 }
             }
             .navigationTitle("Set your Sleep Time")
+            .navigationBarBackButtonHidden()
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save", systemImage: "checkmark") {
-                        
+                        isFirstTime = false
                     }
                     .tint(.primary9)
                 }
