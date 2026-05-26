@@ -23,6 +23,17 @@ struct HorizontalCard: View {
         book.isPicked = true
     }
     
+    private var progressValue: Double {
+
+        let duration =
+            Double(max(book.duration, 1))
+
+        let bookmark =
+            Double(book.bookmark ?? 0)
+
+        return min(max(bookmark / duration, 0), 1)
+    }
+    
     
     var body: some View {
         HStack {
@@ -39,8 +50,9 @@ struct HorizontalCard: View {
                     .font(.caption)
                     .foregroundStyle(Color.gray)
 
-                ProgressView(value: 0.7)
+                ProgressView(value: progressValue)
                     .tint(.primary9)
+                    .padding(.bottom, 32)
             }
             .padding(6)
 

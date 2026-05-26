@@ -297,6 +297,8 @@ struct HomeView: View {
                     .scheduleSleepNotification(
                         book: pickedBook
                     )
+
+                AudioPlayerManager.shared.allBooks = allBooks
             }
 
             .onChange(of: sleepTimeInterval) {
@@ -305,6 +307,11 @@ struct HomeView: View {
                     .scheduleSleepNotification(
                         book: pickedBook
                     )
+            }
+
+            .onChange(of: allBooks) {
+
+                AudioPlayerManager.shared.allBooks = allBooks
             }
             
         }

@@ -13,6 +13,8 @@ struct DetailView: View {
     @Bindable var book: Book
     
     @State private var showPlayer = false
+    
+    @Environment(\.modelContext) private var modelContext
     @Query private var allBooks: [Book]
     
     func pickBook (_ book: Book) {

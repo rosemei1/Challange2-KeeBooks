@@ -78,7 +78,6 @@ class Book: Identifiable {
             synopsis: "The first book in the Penny Parker Mystery Series. Written by the author of the Nancy Drew Mystery Series. - Summary by Amanda Leung",
             duration: 11829,
             status:"completed",
-            bookmark: 10000,
         ),
         Book(
             title: "The Black Cat",
