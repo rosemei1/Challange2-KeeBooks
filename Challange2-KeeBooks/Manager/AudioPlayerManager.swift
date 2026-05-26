@@ -25,6 +25,8 @@ final class AudioPlayerManager:NSObject, ObservableObject {
 
     @Published var isPlaying = false
 
+    @Published var isPreview: Bool = false
+
     @Published var currentTime: Double = 0
 
     @Published var duration: Double = 1
@@ -53,6 +55,8 @@ final class AudioPlayerManager:NSObject, ObservableObject {
     // MARK: - Play Full Audiobook
 
     func play(book: Book) {
+
+        isPreview = false
 
         cleanupPlayer()
 
@@ -98,6 +102,8 @@ final class AudioPlayerManager:NSObject, ObservableObject {
     // MARK: - Preview
 
     func playPreview(book: Book) {
+
+        isPreview = true
 
         cleanupPlayer()
 
@@ -192,6 +198,8 @@ final class AudioPlayerManager:NSObject, ObservableObject {
     // MARK: - Save Bookmark
 
     func saveBookmark() {
+
+        guard !isPreview else { return }
 
         guard let currentBook else { return }
 
