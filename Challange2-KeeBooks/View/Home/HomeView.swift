@@ -21,6 +21,8 @@ struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var allBooks: [Book]
     
+    @State private var bluetoothManager = BluetoothManager()
+    
     var pickedBook: Book {
         allBooks.first {$0.isPicked}!
     }
@@ -221,9 +223,8 @@ struct HomeView: View {
                             .font(.system(size: 50))
                             .foregroundStyle(.primary9)
                         
-                        Text("Device is connected to alexa")
-                            .font(.headline)
-                            .fontWeight(.semibold)
+                        Text(bluetoothManager.isConnected ? "Device is connected to \(bluetoothManager.deviceName ?? "Bluetooth")" : "No device is connected")
+                            .font(.body)
                             .fontDesign(.rounded)
                         
                     }
