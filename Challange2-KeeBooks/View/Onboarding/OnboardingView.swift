@@ -37,7 +37,7 @@ struct OnboardingView: View {
             }
             .background {
                 Color.primary1
-                
+                    .edgesIgnoringSafeArea(.all)
             }
         }
     }

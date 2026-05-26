@@ -6,6 +6,8 @@ struct LibraryView: View {
         GridItem(.flexible()),
         GridItem(.flexible()),
     ]
+    
+    @Query private var allBooks: [Book]
 
     var body: some View {
 //        let items = Array(1...6)
@@ -18,7 +20,7 @@ struct LibraryView: View {
             ScrollView {
                 VStack {
                     LazyVGrid(columns: columns, spacing: 16) {
-                        ForEach(Book.booksData) { book in
+                        ForEach(allBooks) { book in
                             NavigationLink(destination: DetailView(book: book)) {
                                 VerticalCard(book: book)
                             }

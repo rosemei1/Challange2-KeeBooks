@@ -11,6 +11,8 @@ final class SleepManager: ObservableObject {
     @AppStorage("sleepTime")
     private var sleepTimeInterval: Double = 0
     
+    var modelContext: ModelContext?
+
 //    @Query private var allBooks: [Book]
     
 //    var pickedBook: Book? {
@@ -145,6 +147,56 @@ final class SleepManager: ObservableObject {
         sleepText =
             "Monitoring Stopped"
     }
+    
+    // MARK: - RestingBPM
+    
+//    private func fetchRestingBPM() -> Double {
+//        guard let restingHeartRateType =
+//                HKQuantityType.quantityType(
+//                    forIdentifier: .restingHeartRate
+//                )
+//        else {
+//            return 0
+//        }
+//        
+//        let query = HKSampleQuery(
+//            sampleType: restingHeartRateType,
+//            predicate: nil,
+//            limit: 1,
+//            sortDescriptors: [
+//                
+//                NSSortDescriptor(
+//                    key: HKSampleSortIdentifierEndDate,
+//                    ascending: false
+//                )
+//            ]
+//        ) { _, samples, error in
+//            
+//            guard error == nil else {
+//                return
+//            }
+//            
+//            guard let sample =
+//                    samples?.first
+//                    as? HKQuantitySample
+//            else {
+//                return
+//            }
+//            
+//            let unit =
+//            HKUnit.count()
+//                .unitDivided(
+//                    by: HKUnit.minute()
+//                )
+//            
+//            let bpm =
+//            sample.quantity.doubleValue(
+//                for: unit
+//            )
+//            
+//           return bpm
+//        }
+//    }
 
     // MARK: - Night Time Check
 
@@ -307,6 +359,11 @@ final class SleepManager: ObservableObject {
 
                 self.lowMovementCount = 0
             }
+            
+//            self.fetchRestingBPM { restingHeartRate in
+//                
+//                
+//            }
 
             // MARK: - Fetch Heart Rate
 
@@ -323,10 +380,12 @@ final class SleepManager: ObservableObject {
                     """
                     User Probably Sleeping
 
-                    HR: \(Int(bpm)) = \(bpm <= (70 * 0.85))
+                    HR: \(Int(bpm)) = \(55)
                     Still Count:
                     \(self.lowMovementCount) = \(self.lowMovementCount >= 30)
                     """
+                    
+                    self.modelContext?.insert(Book(title: "Sleeping", cover: "dune", audio: "By The Sea", author: "BPM : \(Int(bpm))", narrator: "movement:\(self.lowMovementCount)", synopsis: "sleepTime : \(Date.now)", duration: 20.0, status: "undone"))
 
                     AudioPlayerManager
                         .shared

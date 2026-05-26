@@ -284,6 +284,11 @@ struct HomeView: View {
                 
             }
             .onAppear {
+                
+                SleepManager.shared.modelContext =
+                        modelContext
+                
+                SleepManager.shared.pickedBook = pickedBook
 
                 NotificationManager.shared
                     .onPlayAudiobook = {
