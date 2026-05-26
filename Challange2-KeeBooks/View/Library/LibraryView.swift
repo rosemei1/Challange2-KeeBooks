@@ -2,42 +2,44 @@ import SwiftUI
 import SwiftData
 
 struct LibraryView: View {
+    @State private var selectedBook: Book? = nil
+
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
     ]
 
     var body: some View {
-//        let items = Array(1...6)
-        let columns = [
-            GridItem(.flexible()),
-            GridItem(.flexible()),
-        ]
-
         NavigationStack {
             ScrollView {
                 VStack {
                     LazyVGrid(columns: columns, spacing: 16) {
                         ForEach(Book.booksData) { book in
-                            NavigationLink(destination: DetailView(book: book)) {
-                                VerticalCard(book: book)
-                            }
-                            .buttonStyle(.plain)
+                            VerticalCard(book: book)
+                                .onTapGesture {
+                                    selectedBook = book
+                                }
                         }
                     }
                 }
             }
-//            .toolbarVisibility(.hidden, for: .bottomBar)
-            
             .scrollIndicators(.hidden)
             .navigationTitle("Library")
             .background {
                 BackgroundView()
             }
+            .sheet(item: $selectedBook, onDismiss: {
+                AudioPlayerManager.shared.pause()
+            }) { book in
+                NavigationStack {
+                    MediaPlayerView(book: book, isPreview: true)
+                }
+                .presentationDetents([.fraction(0.85)])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(.ultraThinMaterial)
+            }
         }
         .padding(.top, -85)
-//        .offset(y: -50)
-
     }
 }
 
