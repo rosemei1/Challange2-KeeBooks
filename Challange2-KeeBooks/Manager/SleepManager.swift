@@ -1,331 +1,457 @@
 import Foundation
 import HealthKit
+import CoreMotion
+import SwiftUI
 import Combine
+import SwiftData
 
 @MainActor
-final class SleepManager:
-    ObservableObject {
+final class SleepManager: ObservableObject {
+    
+    @AppStorage("sleepTime")
+    private var sleepTimeInterval: Double = 0
+    
+//    @Query private var allBooks: [Book]
+    
+//    var pickedBook: Book? {
+//        allBooks.first {$0.isPicked}
+//    }
+    var pickedBook: Book?
+    
+    var formattedSleepTime: String {
+
+        let date =
+            Date(timeIntervalSince1970: sleepTimeInterval)
+
+        let formatter =
+            DateFormatter()
+
+        formatter.timeStyle = .short
+
+        return formatter.string(from: date)
+    }
+
     static let shared = SleepManager()
-    
+
     // MARK: - HealthKit
-    
+
     private let healthStore = HKHealthStore()
-    
-    // MARK: - Timers
-    
+
+    // MARK: - Motion
+
+    private let motionManager =
+        CMMotionActivityManager()
+
+    // MARK: - Timer
+
     private var monitoringTimer: Timer?
-    
-    private var bedtimeTimer: Timer?
-    
-    // MARK: - User Sleep Time
-    
-    // Temporary variable
-    // Example:
-    // 11:00 PM bedtime
-    var targetSleepTime: Date?
-    
-    // MARK: - Notification Control
-    
-    private var didSendNotificationToday = false
-    
-    private var lastNotificationDate: Date?
-    
-    // MARK: - Request Permission
-    
-    func requestAuthorization() async {
-        
+
+    // MARK: - Published UI
+
+    @Published var sleepText =
+        "Not Monitoring"
+
+    // MARK: - State
+
+    private var lowMovementCount = 0
+
+    private var latestHeartRate: Double = 0
+
+    private init() {}
+
+    // MARK: - Authorization
+
+    func requestAuthorization() {
+
         guard HKHealthStore
             .isHealthDataAvailable()
         else {
+
+            sleepText =
+                "HealthKit unavailable"
+
             return
         }
-        
-        guard let sleepType =
-                HKObjectType.categoryType(
-                    forIdentifier: .sleepAnalysis
-                )
+
+        let readTypes: Set<HKObjectType> = [
+
+            HKObjectType.categoryType(
+                forIdentifier: .sleepAnalysis
+            )!,
+
+            HKObjectType.quantityType(
+                forIdentifier: .heartRate
+            )!
+        ]
+
+        healthStore.requestAuthorization(
+            toShare: [],
+            read: readTypes
+        ) { success, error in
+
+            DispatchQueue.main.async {
+
+                if let error = error {
+
+                    self.sleepText =
+                        error.localizedDescription
+
+                    return
+                }
+
+                if success {
+
+                    self.sleepText =
+                        "Permission Granted"
+
+                    self.startMonitoring()
+
+                } else {
+
+                    self.sleepText =
+                        "Permission Denied"
+                }
+            }
+        }
+    }
+
+    // MARK: - Start Monitoring
+
+    func startMonitoring() {
+
+        monitoringTimer?.invalidate()
+
+        sleepText =
+            "Monitoring Sleep..."
+
+        monitoringTimer =
+            Timer.scheduledTimer(
+                withTimeInterval: 10,
+                repeats: true
+            ) { _ in
+
+                self.checkSleepState()
+            }
+    }
+
+    // MARK: - Stop Monitoring
+
+    func stopMonitoring() {
+
+        monitoringTimer?.invalidate()
+
+        monitoringTimer = nil
+
+        sleepText =
+            "Monitoring Stopped"
+    }
+
+    // MARK: - Night Time Check
+
+    private func isSleepTime() -> Bool {
+
+        let calendar = Calendar.current
+
+        let now = Date()
+
+        let sleepDate =
+            Date(timeIntervalSince1970: sleepTimeInterval)
+
+        let nowComponents =
+            calendar.dateComponents(
+                [.hour, .minute],
+                from: now
+            )
+
+        let sleepComponents =
+            calendar.dateComponents(
+                [.hour, .minute],
+                from: sleepDate
+            )
+
+        let currentMinutes =
+            (nowComponents.hour ?? 0) * 60 +
+            (nowComponents.minute ?? 0)
+
+        let sleepMinutes =
+            (sleepComponents.hour ?? 0) * 60 +
+            (sleepComponents.minute ?? 0)
+
+
+        if sleepMinutes > 720 {
+
+            return currentMinutes >= sleepMinutes ||
+                   currentMinutes <= 360
+        }
+
+        return currentMinutes >= sleepMinutes
+    }
+
+    // MARK: - Heart Rate
+
+    func fetchHeartRate(
+        completion: @escaping (Double) -> Void
+    ) {
+
+        guard let heartRateType =
+            HKQuantityType.quantityType(
+                forIdentifier: .heartRate
+            )
         else {
             return
         }
-        
-        do {
-            
-            try await healthStore
-                .requestAuthorization(
-                    toShare: [],
-                    read: [sleepType]
+
+        let query = HKSampleQuery(
+            sampleType: heartRateType,
+            predicate: nil,
+            limit: 1,
+            sortDescriptors: [
+
+                NSSortDescriptor(
+                    key: HKSampleSortIdentifierEndDate,
+                    ascending: false
                 )
-            
-        } catch {
-            
-            print(error.localizedDescription)
+            ]
+        ) { _, samples, error in
+
+            guard error == nil else {
+                return
+            }
+
+            guard let sample =
+                samples?.first
+                    as? HKQuantitySample
+            else {
+                return
+            }
+
+            let unit =
+                HKUnit.count()
+                    .unitDivided(
+                        by: HKUnit.minute()
+                    )
+
+            let bpm =
+                sample.quantity.doubleValue(
+                    for: unit
+                )
+
+            DispatchQueue.main.async {
+
+                self.latestHeartRate = bpm
+
+                completion(bpm)
+            }
         }
+
+        healthStore.execute(query)
     }
-    
-    // MARK: - Start Monitoring Sleep
-    
-    func startMonitoringSleep() {
-        
-        monitoringTimer?.invalidate()
-        
-        monitoringTimer = Timer.scheduledTimer(
-            withTimeInterval: 60,
-            repeats: true
-        ) { _ in
-            
-            Task {
-                
+
+    // MARK: - Sleep Detection
+
+    func checkSleepState() {
+
+        guard CMMotionActivityManager
+            .isActivityAvailable()
+        else {
+
+            sleepText =
+                "Motion unavailable"
+
+            return
+        }
+
+        let now = Date()
+
+        let startDate =
+            Calendar.current.date(
+                byAdding: .minute,
+                value: -1,
+                to: now
+            )!
+
+        motionManager.queryActivityStarting(
+            from: startDate,
+            to: now,
+            to: .main
+        ) { activities, error in
+
+            if let error = error {
+
+                self.sleepText =
+                    error.localizedDescription
+
+                return
+            }
+
+            guard let activity =
+                activities?.last
+            else {
+
+                self.sleepText =
+                    "No motion data"
+
+                return
+            }
+
+            // MARK: - Movement Check
+
+            let noMovement =
+                activity.stationary
+
+            if noMovement {
+
+                self.lowMovementCount += 1
+
+            } else {
+
+                self.lowMovementCount = 0
+            }
+
+            // MARK: - Fetch Heart Rate
+
+            self.fetchHeartRate { bpm in
+
                 let sleeping =
-                await self.isUserSleeping()
-                
+                    self.lowMovementCount >= 30 &&
+                    self.isSleepTime() &&
+                bpm <= (70 * 0.85)
+
                 if sleeping {
-                    
+
+                    self.sleepText =
+                    """
+                    User Probably Sleeping
+
+                    HR: \(Int(bpm)) = \(bpm <= (70 * 0.85))
+                    Still Count:
+                    \(self.lowMovementCount) = \(self.lowMovementCount >= 30)
+                    """
+
                     AudioPlayerManager
                         .shared
                         .stopBecauseUserFellAsleep()
+
+                    self.stopMonitoring()
+
+                } else {
+                    if let pickedBook = self.pickedBook {
+                        NotificationManager.shared.scheduleSleepNotification(book: pickedBook)
+                    } else {
+                        NotificationManager.shared.scheduleSleepNotification(book: Book(
+                            title: "Beauty and the Monster",
+                            cover: "BookCover-TheBeautyAndTheMonster",
+                            audio: "Beauty and the Monster",
+                            author: "Stéphanie-Félicité de Genlis",
+                            narrator: "Mary Kay",
+                            synopsis: "A French theatrical adaptation of the famous fairy tale, The Beauty and the Monster is a drama of three characters - Beauty (Sabina), the Beast (Phanor) and Beauty's best friend, Phedima (the third wheel). - Summary by Mary Kay",
+                            duration: 491,
+                            status:"ongoing",
+                            bookmark: 200,
+                        ))
+                    }
+                    
+
+                    self.sleepText =
+                    """
+                    User Awake
+
+                    HR: \(Int(bpm)) = \(bpm <= (70 * 0.85))
+                    Still Count:
+                    \(self.lowMovementCount) = \(self.lowMovementCount >= 30)
+
+                    SleepTime:
+                    \(self.formattedSleepTime) = \(self.isSleepTime())
+                    """
                 }
             }
         }
     }
-    
-    // MARK: - Stop Monitoring Sleep
-    
-    func stopMonitoringSleep() {
-        
-        monitoringTimer?.invalidate()
-        
-        monitoringTimer = nil
-    }
-    
-    // MARK: - Start Bedtime Monitoring
-    
-    func startBedtimeMonitoring() {
-        
-        bedtimeTimer?.invalidate()
-        
-        bedtimeTimer = Timer.scheduledTimer(
-            withTimeInterval: 60,
-            repeats: true
-        ) { _ in
-            
-            Task {
-                
-                await self.checkBedtime()
-            }
-        }
-    }
-    
-    // MARK: - Stop Bedtime Monitoring
-    
-    func stopBedtimeMonitoring() {
-        
-        bedtimeTimer?.invalidate()
-        
-        bedtimeTimer = nil
-    }
-    
-    // MARK: - Bedtime Check
-    
-    private func checkBedtime() async {
-        
-        guard let targetSleepTime else {
-            return
-        }
-        
-        resetNotificationFlagIfNeeded()
-        
-        // Prevent duplicates
-        guard !didSendNotificationToday else {
-            return
-        }
-        
-        let calendar = Calendar.current
-        
-        let now = Date()
-        
-        let nowHour =
-        calendar.component(
-            .hour,
-            from: now
-        )
-        
-        let nowMinute =
-        calendar.component(
-            .minute,
-            from: now
-        )
-        
-        let targetHour =
-        calendar.component(
-            .hour,
-            from: targetSleepTime
-        )
-        
-        let targetMinute =
-        calendar.component(
-            .minute,
-            from: targetSleepTime
-        )
-        
-        // Match bedtime
-        guard nowHour == targetHour,
-              nowMinute == targetMinute
-        else {
-            return
-        }
-        
-        let sleeping =
-        await isUserSleeping()
-        
-        // User still awake
-        if !sleeping {
-            
-            if let book =
-                AudioPlayerManager
-                .shared
-                .currentBook {
-                
-                NotificationManager
-                    .shared
-                    .scheduleSleepNotification(
-                        book: book
-                    )
-                
-                didSendNotificationToday = true
-                
-                lastNotificationDate = Date()
-            }
-        }
-    }
-    
-    // MARK: - Reset Notification State
-    
-    private func resetNotificationFlagIfNeeded() {
-        
-        guard let lastNotificationDate else {
-            
-            didSendNotificationToday = false
-            
-            return
-        }
-        
-        if !Calendar.current
-            .isDateInToday(lastNotificationDate) {
-            
-            didSendNotificationToday = false
-        }
-    }
-    
-    // MARK: - Sleep Check
-    
-    func isUserSleeping() async -> Bool {
-        
+
+    // MARK: - Latest Sleep Stage
+
+    func fetchLatestSleepStage() {
+
         guard let sleepType =
-                HKObjectType.categoryType(
-                    forIdentifier: .sleepAnalysis
-                )
-        else {
-            
-            return false
-        }
-        
-        return await withCheckedContinuation {
-            continuation in
-            
-            let startDate =
-            Calendar.current.date(
-                byAdding: .hour,
-                value: -12,
-                to: Date()
-            ) ?? Date()
-            
-            let predicate =
-            HKQuery.predicateForSamples(
-                withStart: startDate,
-                end: Date()
+            HKObjectType.categoryType(
+                forIdentifier: .sleepAnalysis
             )
-            
-            let query = HKSampleQuery(
-                sampleType: sleepType,
-                predicate: predicate,
-                limit: 1,
-                sortDescriptors: [
-                    NSSortDescriptor(
-                        key: HKSampleSortIdentifierEndDate,
-                        ascending: false
-                    )
-                ]
-            ) { _, samples, error in
-                
-                if let error {
-                    
-                    print(error.localizedDescription)
-                    
-                    continuation.resume(
-                        returning: false
-                    )
-                    
+        else {
+            return
+        }
+
+        let sortDescriptor =
+            NSSortDescriptor(
+                key: HKSampleSortIdentifierEndDate,
+                ascending: false
+            )
+
+        let query = HKSampleQuery(
+            sampleType: sleepType,
+            predicate: nil,
+            limit: 1,
+            sortDescriptors: [
+                sortDescriptor
+            ]
+        ) { _, samples, error in
+
+            DispatchQueue.main.async {
+
+                if let error = error {
+
+                    self.sleepText =
+                        error.localizedDescription
+
                     return
                 }
-                
+
                 guard let sample =
-                        samples?.first
+                    samples?.first
                         as? HKCategorySample
                 else {
-                    
-                    continuation.resume(
-                        returning: false
-                    )
-                    
+
+                    self.sleepText =
+                        "No sleep data"
+
                     return
                 }
-                
+
                 let value =
-                HKCategoryValueSleepAnalysis(
-                    rawValue: sample.value
-                )
-                
-                // Check valid sleep states
-                let isAsleep: Bool
-                
+                    HKCategoryValueSleepAnalysis(
+                        rawValue: sample.value
+                    )
+
                 switch value {
-                    
-                case .asleep,
-                        .asleepCore,
-                        .asleepREM,
-                        .asleepDeep:
-                    
-                    isAsleep = true
-                    
+
+                case .awake:
+                    self.sleepText = "Awake"
+
+                case .asleep:
+                    self.sleepText = "Asleep"
+
+                case .asleepCore:
+                    self.sleepText =
+                        "Core Sleep"
+
+                case .asleepDeep:
+                    self.sleepText =
+                        "Deep Sleep"
+
+                case .asleepREM:
+                    self.sleepText =
+                        "REM Sleep"
+
+                case .inBed:
+                    self.sleepText =
+                        "In Bed"
+
                 default:
-                    
-                    isAsleep = false
+                    self.sleepText =
+                        "Unknown"
                 }
-                
-                // Ensure current time is inside sleep interval
-                let now = Date()
-                
-                let isCurrentSleepSession =
-                sample.startDate <= now &&
-                sample.endDate >= now
-                
-                // Extra protection against stale data
-                let isRecent =
-                sample.endDate >
-                now.addingTimeInterval(-900)
-                
-                let finalResult =
-                isAsleep &&
-                isCurrentSleepSession &&
-                isRecent
-                
-                continuation.resume(
-                    returning: finalResult
-                )
             }
-            
-            healthStore.execute(query)
         }
+
+        healthStore.execute(query)
     }
-    
 }

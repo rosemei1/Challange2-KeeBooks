@@ -10,7 +10,10 @@ import SwiftData
 
 struct OnGoingView: View {
 //    let items = Array(1...6)
+    var title: String
+    var isOnGoingPage: Bool
     @Query(sort: \Book.title) private var books: [Book]
+    
     let columns = [
         GridItem(.flexible()),
     ]
@@ -20,14 +23,17 @@ struct OnGoingView: View {
             ScrollView{
                 VStack{
                     LazyVGrid(columns: columns, spacing: 16){
-                        ForEach(books.filter { $0.status == "ongoing" }){ book in
-                            HorizontalCard(book: book)
+                
+                        ForEach((isOnGoingPage) ? books.filter { $0.status == "ongoing" } : books){ book in
+                            NavigationLink(destination: DetailView(book: book)) {
+                                HorizontalCard(book: book)
+                            }
                         }
                     }
                 }
                 .padding(.horizontal, 16)
             }
-            .navigationTitle("Ongoing")
+            .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .scrollIndicators(.hidden)
             .background {
@@ -38,6 +44,6 @@ struct OnGoingView: View {
 }
 
 #Preview {
-    OnGoingView()
+    OnGoingView(title: "OnGoing", isOnGoingPage: true)
         .modelContainer(Data.shared.modelContainer)
 }

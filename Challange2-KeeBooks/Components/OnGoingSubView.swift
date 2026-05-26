@@ -46,7 +46,7 @@ struct OnGoingSubView: View {
             
         }
         .navigationDestination(isPresented: $chevron) {
-            OnGoingView()
+            OnGoingView(title: "On Going", isOnGoingPage: true)
         }
         .padding()
     }
