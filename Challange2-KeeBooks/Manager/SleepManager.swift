@@ -5,7 +5,6 @@ import SwiftUI
 import Combine
 import SwiftData
 
-@MainActor
 final class SleepManager: ObservableObject {
     
     @AppStorage("sleepTime")
@@ -83,6 +82,9 @@ final class SleepManager: ObservableObject {
 
             HKObjectType.quantityType(
                 forIdentifier: .heartRate
+            )!,
+            HKObjectType.quantityType(
+                forIdentifier: .restingHeartRate
             )!
         ]
 
@@ -150,53 +152,54 @@ final class SleepManager: ObservableObject {
     
     // MARK: - RestingBPM
     
-//    private func fetchRestingBPM() -> Double {
-//        guard let restingHeartRateType =
-//                HKQuantityType.quantityType(
-//                    forIdentifier: .restingHeartRate
-//                )
-//        else {
-//            return 0
-//        }
-//        
-//        let query = HKSampleQuery(
-//            sampleType: restingHeartRateType,
-//            predicate: nil,
-//            limit: 1,
-//            sortDescriptors: [
-//                
-//                NSSortDescriptor(
-//                    key: HKSampleSortIdentifierEndDate,
-//                    ascending: false
-//                )
-//            ]
-//        ) { _, samples, error in
-//            
-//            guard error == nil else {
-//                return
-//            }
-//            
-//            guard let sample =
-//                    samples?.first
-//                    as? HKQuantitySample
-//            else {
-//                return
-//            }
-//            
-//            let unit =
-//            HKUnit.count()
-//                .unitDivided(
-//                    by: HKUnit.minute()
-//                )
-//            
-//            let bpm =
-//            sample.quantity.doubleValue(
-//                for: unit
-//            )
-//            
-//           return bpm
-//        }
-//    }
+    private func fetchRestingBPM(completion: @escaping (Double) -> Void) {
+        guard let restingHeartRateType =
+                HKQuantityType.quantityType(
+                    forIdentifier: .restingHeartRate
+                )
+        else {
+            completion(0)
+            return
+        }
+        
+        let query = HKSampleQuery(
+            sampleType: restingHeartRateType,
+            predicate: nil,
+            limit: 1,
+            sortDescriptors: [
+                
+                NSSortDescriptor(
+                    key: HKSampleSortIdentifierEndDate,
+                    ascending: false
+                )
+            ]
+        ) { _, samples, error in
+            
+            guard error == nil else {
+                return
+            }
+            
+            guard let sample =
+                    samples?.first
+                    as? HKQuantitySample
+            else {
+                return
+            }
+            
+            let unit =
+            HKUnit.count()
+                .unitDivided(
+                    by: HKUnit.minute()
+                )
+            
+            let bpm =
+            sample.quantity.doubleValue(
+                for: unit
+            )
+            completion(bpm)
+        }
+        healthStore.execute(query)
+    }
 
     // MARK: - Night Time Check
 
@@ -368,60 +371,71 @@ final class SleepManager: ObservableObject {
             // MARK: - Fetch Heart Rate
 
             self.fetchHeartRate { bpm in
-
-                let sleeping =
+                
+                self.fetchRestingBPM { restingHeartRate in
+                    
+                    
+                    let sleeping =
                     self.lowMovementCount >= 30 &&
                     self.isSleepTime() &&
-                bpm <= (70 * 0.85)
-
-                if sleeping {
-
-                    self.sleepText =
+                    bpm <= (restingHeartRate * 0.85)
+                    
+                    if sleeping {
+                        
+                        self.sleepText =
                     """
                     User Probably Sleeping
+                    
+                    HR: \(Int(bpm)) = \(bpm <= restingHeartRate * 0.85)
+                    Resting Heart Rate: \(restingHeartRate)
+                    Sleeping Heart Rate: \(restingHeartRate * 0.85)
 
-                    HR: \(Int(bpm)) = \(55)
                     Still Count:
                     \(self.lowMovementCount) = \(self.lowMovementCount >= 30)
                     """
-                    
-                    self.modelContext?.insert(Book(title: "Sleeping", cover: "dune", audio: "By The Sea", author: "BPM : \(Int(bpm))", narrator: "movement:\(self.lowMovementCount)", synopsis: "sleepTime : \(Date.now)", duration: 20.0, status: "undone"))
-
-                    AudioPlayerManager
-                        .shared
-                        .stopBecauseUserFellAsleep()
-
-                    self.stopMonitoring()
-
-                } else {
-                    if let pickedBook = self.pickedBook {
-                        NotificationManager.shared.scheduleSleepNotification(book: pickedBook)
+                        
+                        self.modelContext?.insert(Book(title: "Sleeping", cover: "dune", audio: "By The Sea", author: "BPM : \(Int(bpm))", narrator: "movement:\(self.lowMovementCount)", synopsis: "sleepTime : \(Date.now)", duration: 20.0, status: "undone"))
+                        
+                        AudioPlayerManager
+                            .shared
+                            .stopBecauseUserFellAsleep()
+                        
+                        self.stopMonitoring()
+                        
                     } else {
-                        NotificationManager.shared.scheduleSleepNotification(book: Book(
-                            title: "Beauty and the Monster",
-                            cover: "BookCover-TheBeautyAndTheMonster",
-                            audio: "Beauty and the Monster",
-                            author: "Stéphanie-Félicité de Genlis",
-                            narrator: "Mary Kay",
-                            synopsis: "A French theatrical adaptation of the famous fairy tale, The Beauty and the Monster is a drama of three characters - Beauty (Sabina), the Beast (Phanor) and Beauty's best friend, Phedima (the third wheel). - Summary by Mary Kay",
-                            duration: 491,
-                            status:"ongoing",
-                            bookmark: 200,
-                        ))
-                    }
-                    
-
-                    self.sleepText =
+                        if let pickedBook = self.pickedBook {
+                            NotificationManager.shared.scheduleSleepNotification(book: pickedBook)
+                        } else {
+                            NotificationManager.shared.scheduleSleepNotification(book: Book(
+                                title: "Beauty and the Monster",
+                                cover: "BookCover-TheBeautyAndTheMonster",
+                                audio: "Beauty and the Monster",
+                                author: "Stéphanie-Félicité de Genlis",
+                                narrator: "Mary Kay",
+                                synopsis: "A French theatrical adaptation of the famous fairy tale, The Beauty and the Monster is a drama of three characters - Beauty (Sabina), the Beast (Phanor) and Beauty's best friend, Phedima (the third wheel). - Summary by Mary Kay",
+                                duration: 491,
+                                status:"ongoing",
+                                bookmark: 200,
+                            ))
+                        }
+                        
+                        
+                        self.sleepText =
                     """
                     User Awake
+                    
+                    HR: \(Int(bpm)) = \(bpm <= restingHeartRate * 0.85)
+                    Resting Heart Rate: \(restingHeartRate)
+                    Sleeping Heart Rate: \(restingHeartRate * 0.85)
 
-                    HR: \(Int(bpm)) = \(bpm <= (70 * 0.85))
+
                     Still Count:
                     \(self.lowMovementCount) = \(self.lowMovementCount >= 30)
-
+                    
                     SleepTime:
                     \(self.formattedSleepTime) = \(self.isSleepTime())
                     """
+                    }
                 }
             }
         }
