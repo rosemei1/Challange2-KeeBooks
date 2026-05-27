@@ -131,9 +131,8 @@ struct MediaPlayerView: View {
 
                         Button {
 
-                            if player.currentBook?.id != book.id {
+                            if player.currentBook?.id != book.id || player.isPreview != isPreview {
 
-                                player.isPreview = isPreview
                                 if isPreview {
                                     player.playPreview(book: book)
                                 } else {
@@ -184,6 +183,15 @@ struct MediaPlayerView: View {
             )
             .padding(.horizontal, 16)
 
+        }
+        .onAppear {
+            if player.currentBook?.id != book.id || player.isPreview != isPreview {
+                if isPreview {
+                    player.playPreview(book: book)
+                } else {
+                    player.play(book: book)
+                }
+            }
         }
         .navigationTitle(isPreview ? "Preview" : "Player")
         .navigationBarTitleDisplayMode(.inline)

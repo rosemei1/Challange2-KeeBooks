@@ -11,7 +11,8 @@ import _SwiftData_SwiftUI
 struct DetailView: View {
     
     @Bindable var book: Book
-    
+    var isPreview: Bool = false
+
     @State private var showPlayer = false
     
     @Environment(\.modelContext) private var modelContext
@@ -109,7 +110,7 @@ struct DetailView: View {
                     AudioPlayerManager.shared.pause()
                 }) {
                     NavigationStack {
-                        MediaPlayerView(book: book, isPreview: false)
+                        MediaPlayerView(book: book, isPreview: isPreview)
                     }
                     .presentationDetents([.large])
                     .presentationDragIndicator(.visible)

@@ -17,7 +17,7 @@ struct LibraryView: View {
                 VStack {
                     LazyVGrid(columns: columns, spacing: 16) {
                         ForEach(allBooks) { book in
-                            NavigationLink(destination: DetailView(book: book)) {
+                            NavigationLink(destination: DetailView(book: book, isPreview: true)) {
                                 VerticalCard(book: book)
                             }
                             .buttonStyle(.plain)
