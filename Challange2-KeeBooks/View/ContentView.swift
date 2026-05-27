@@ -12,15 +12,15 @@ struct ContentView: View {
             OnboardingView()
         } else {
             Group {
-                Text(sleepManager.sleepText)
-                
-                Button("Start Sleep Detection") {
-                    sleepManager.requestAuthorization()
-                }
-                
-                Button("Check Latest Sleep Stage") {
-                    sleepManager.fetchLatestSleepStage()
-                }
+//                Text(sleepManager.sleepText)
+//                
+//                Button("Start Sleep Detection") {
+//                    sleepManager.requestAuthorization()
+//                }
+//                
+//                Button("Check Latest Sleep Stage") {
+//                    sleepManager.fetchLatestSleepStage()
+//                }
                 
                 TabView {
                     
