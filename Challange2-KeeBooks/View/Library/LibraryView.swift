@@ -8,21 +8,24 @@ struct LibraryView: View {
         GridItem(.flexible()),
         GridItem(.flexible()),
     ]
+    
+    @Query private var allBooks: [Book]
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack {
                     LazyVGrid(columns: columns, spacing: 16) {
-                        ForEach(Book.booksData) { book in
-                            VerticalCard(book: book)
-                                .onTapGesture {
-                                    selectedBook = book
-                                }
+                        ForEach(allBooks) { book in
+                            NavigationLink(destination: DetailView(book: book)) {
+                                VerticalCard(book: book)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }
             }
+            
             .scrollIndicators(.hidden)
             .navigationTitle("Library")
             .background {
@@ -40,6 +43,7 @@ struct LibraryView: View {
             }
         }
         .padding(.top, -85)
+
     }
 }
 

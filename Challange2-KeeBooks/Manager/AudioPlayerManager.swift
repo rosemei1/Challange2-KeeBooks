@@ -5,7 +5,7 @@ import UIKit
 import Combine
 
 @MainActor
-final class AudioPlayerManager:NSObject, ObservableObject {
+final class AudioPlayerManager: NSObject, ObservableObject {
 
     static let shared = AudioPlayerManager()
 
@@ -31,6 +31,9 @@ final class AudioPlayerManager:NSObject, ObservableObject {
 
     @Published var duration: Double = 1
 
+    // NEW
+    @Published var allBooks: [Book] = []
+
     // MARK: - Init
 
     private override init() {
@@ -48,6 +51,8 @@ final class AudioPlayerManager:NSObject, ObservableObject {
 
             player?.removeTimeObserver(observer)
         }
+
+        NotificationCenter.default.removeObserver(self)
 
         previewTimer?.invalidate()
     }
@@ -74,14 +79,25 @@ final class AudioPlayerManager:NSObject, ObservableObject {
 
         player = AVPlayer(url: url)
 
+        // Detect when playback finishes
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(playerDidFinishPlaying),
+            name: .AVPlayerItemDidPlayToEndTime,
+            object: player?.currentItem
+        )
+
         setupTimeObserver()
 
-        // Determine playback start time
+        // Resume or restart
         let startTime: Double
 
         if book.status == "completed" {
+
             startTime = 0
+
         } else {
+
             startTime = book.bookmark ?? 0
         }
 
@@ -97,6 +113,45 @@ final class AudioPlayerManager:NSObject, ObservableObject {
         isPlaying = true
 
         setupNowPlaying(book: book)
+    }
+
+    // MARK: - AUTOPLAY NEXT RANDOM BOOK
+
+    @objc
+    private func playerDidFinishPlaying() {
+
+        guard let currentBook else { return }
+
+        // Mark current book completed
+        currentBook.status = "completed"
+
+        currentBook.bookmark = 0
+
+        // Get books except current
+        let availableBooks = allBooks.filter {
+            $0.id != currentBook.id
+        }
+
+        // Pick random next
+        guard let nextBook =
+            availableBooks.randomElement()
+        else {
+
+            stop()
+
+            return
+        }
+
+        // Update picked state
+        for book in allBooks {
+
+            book.isPicked = false
+        }
+
+        nextBook.isPicked = true
+
+        // Play next automatically
+        play(book: nextBook)
     }
 
     // MARK: - Preview
@@ -285,6 +340,8 @@ final class AudioPlayerManager:NSObject, ObservableObject {
     private func cleanupPlayer() {
 
         stopPreviewTimer()
+
+        NotificationCenter.default.removeObserver(self)
 
         if let observer = timeObserver {
 
