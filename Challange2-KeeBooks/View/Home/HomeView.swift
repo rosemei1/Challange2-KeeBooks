@@ -243,6 +243,7 @@ struct HomeView: View {
                 )
                 .padding(.horizontal)
                 .padding(.vertical, 16)
+
             }
             .background {
                 ZStack {
@@ -281,8 +282,6 @@ struct HomeView: View {
                     .background(.ultraThinMaterial)
                     .presentationBackground(.ultraThinMaterial)
                     .presentationCornerRadius(40)
-                
-                
             }
             .onAppear {
                 

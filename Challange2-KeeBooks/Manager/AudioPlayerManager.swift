@@ -25,6 +25,8 @@ final class AudioPlayerManager: NSObject, ObservableObject {
 
     @Published var isPlaying = false
 
+    @Published var isPreview: Bool = false
+
     @Published var currentTime: Double = 0
 
     @Published var duration: Double = 1
@@ -59,6 +61,8 @@ final class AudioPlayerManager: NSObject, ObservableObject {
 
     func play(book: Book) {
 
+        isPreview = false
+
         cleanupPlayer()
 
         guard let url = Bundle.main.url(
@@ -83,12 +87,14 @@ final class AudioPlayerManager: NSObject, ObservableObject {
             object: player?.currentItem
         )
 
+        book.status = "ongoing"
+
         setupTimeObserver()
 
         // Resume or restart
         let startTime: Double
 
-        if book.status == "completed" {
+        if book.bookmark == nil || book.bookmark == 0 {
 
             startTime = 0
 
@@ -153,6 +159,8 @@ final class AudioPlayerManager: NSObject, ObservableObject {
     // MARK: - Preview
 
     func playPreview(book: Book) {
+
+        isPreview = true
 
         cleanupPlayer()
 
@@ -247,6 +255,8 @@ final class AudioPlayerManager: NSObject, ObservableObject {
     // MARK: - Save Bookmark
 
     func saveBookmark() {
+
+        guard !isPreview else { return }
 
         guard let currentBook else { return }
 

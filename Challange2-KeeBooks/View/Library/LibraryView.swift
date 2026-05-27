@@ -2,6 +2,8 @@ import SwiftUI
 import SwiftData
 
 struct LibraryView: View {
+    @State private var selectedBook: Book? = nil
+
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
@@ -10,12 +12,6 @@ struct LibraryView: View {
     @Query private var allBooks: [Book]
 
     var body: some View {
-//        let items = Array(1...6)
-        let columns = [
-            GridItem(.flexible()),
-            GridItem(.flexible()),
-        ]
-
         NavigationStack {
             ScrollView {
                 VStack {
@@ -34,6 +30,16 @@ struct LibraryView: View {
             .navigationTitle("Library")
             .background {
                 BackgroundView()
+            }
+            .sheet(item: $selectedBook, onDismiss: {
+                AudioPlayerManager.shared.pause()
+            }) { book in
+                NavigationStack {
+                    MediaPlayerView(book: book, isPreview: true)
+                }
+                .presentationDetents([.fraction(0.85)])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(.ultraThinMaterial)
             }
         }
         .padding(.top, -85)

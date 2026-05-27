@@ -105,11 +105,15 @@ struct DetailView: View {
                     Color.primary1
                     BackgroundView()
                 }
-                .sheet(isPresented: $showPlayer) {
-                    
-                    MediaPlayerView(book: book)
-                        .presentationDetents([.large])
-                        .presentationDragIndicator(.visible)
+                .sheet(isPresented: $showPlayer, onDismiss: {
+                    AudioPlayerManager.shared.pause()
+                }) {
+                    NavigationStack {
+                        MediaPlayerView(book: book, isPreview: false)
+                    }
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(.ultraThinMaterial)
                 }
             }
             .background(Color.primary1)

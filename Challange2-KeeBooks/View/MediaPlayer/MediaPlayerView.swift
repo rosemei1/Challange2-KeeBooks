@@ -10,7 +10,8 @@ import SwiftUI
 struct MediaPlayerView: View {
 
     var book: Book
-    
+    var isPreview: Bool = false
+
     @Environment(\.dismiss) private var dismiss
 
     @StateObject private var player =
@@ -22,9 +23,6 @@ struct MediaPlayerView: View {
 
         ZStack {
 
-            BackgroundView()
-                .ignoresSafeArea()
-
             VStack(spacing: 0) {
 
                 GeometryReader { geo in
@@ -34,26 +32,28 @@ struct MediaPlayerView: View {
                         .scaledToFill()
                         .frame(
                             width: geo.size.width,
-                            height: geo.size.height
+                            height: geo.size.height,
+                            alignment: Alignment(horizontal: .center, vertical: .top)
                         )
                         .clipped()
+                        
                 }
-                .frame(height: 430)
+                .frame(height: 450)
+//                .padding(.top, 4)
 
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 4) {
 
                     Text(book.title)
-                        .font(.title)
+                        .font(.title3)
                         .bold()
 
                     Text(book.author)
-                        .font(.subheadline)
+                        .font(.footnote)
                         .fontWeight(.semibold)
 
                     Text(book.narrator)
-                        .font(.subheadline)
+                        .font(.footnote)
                         .foregroundStyle(.secondary)
-                        .padding(.top, 8)
 
                     // MARK: - Slider
 
@@ -86,7 +86,7 @@ struct MediaPlayerView: View {
                         }
                     )
                     .tint(Color.primary9)
-                    .padding(.top, 12)
+                    .padding(.top, 4)
 
                     // MARK: - Time Labels
 
@@ -104,11 +104,11 @@ struct MediaPlayerView: View {
                             "-\(player.formatTime(player.duration - player.currentTime))"
                         )
                     }
-                    .font(.caption)
+                    .font(.caption2)
                     .foregroundStyle(.secondary)
 
                     Divider()
-                        .padding(.vertical, 16)
+                        .padding(.vertical, 10)
 
                     // MARK: - Controls
 
@@ -123,7 +123,7 @@ struct MediaPlayerView: View {
                         } label: {
 
                             Image(systemName: "gobackward.10")
-                                .font(.system(size: 40))
+                                .font(.system(size: 28))
                                 .foregroundStyle(Color.primary9)
                         }
 
@@ -133,7 +133,12 @@ struct MediaPlayerView: View {
 
                             if player.currentBook?.id != book.id {
 
-                                player.play(book: book)
+                                player.isPreview = isPreview
+                                if isPreview {
+                                    player.playPreview(book: book)
+                                } else {
+                                    player.play(book: book)
+                                }
 
                             } else {
 
@@ -148,7 +153,7 @@ struct MediaPlayerView: View {
                                     ? "pause.circle.fill"
                                     : "play.circle.fill"
                             )
-                            .font(.system(size: 70))
+                            .font(.system(size: 54))
                             .foregroundStyle(Color.primary9)
                         }
 
@@ -161,7 +166,7 @@ struct MediaPlayerView: View {
                         } label: {
 
                             Image(systemName: "goforward.10")
-                                .font(.system(size: 40))
+                                .font(.system(size: 28))
                                 .foregroundStyle(Color.primary9)
                         }
 
@@ -169,7 +174,7 @@ struct MediaPlayerView: View {
                     }
                 }
                 .padding(20)
-                .background(.white)
+                .background(.ultraThinMaterial)
             }
             .clipShape(
                 RoundedRectangle(
@@ -178,7 +183,22 @@ struct MediaPlayerView: View {
                 )
             )
             .padding(.horizontal, 16)
-            
+
+        }
+        .navigationTitle(isPreview ? "Preview" : "Player")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button { dismiss() } label: {
+                    Image(systemName: "chevron.left")
+                }
+            }
+            ToolbarItem(placement: .principal) {
+                Text(isPreview ? "Preview" : "Player")
+                    .font(.title2)
+                    .fontWeight(.bold)
+            }
         }
     }
 }

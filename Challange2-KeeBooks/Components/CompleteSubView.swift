@@ -16,7 +16,7 @@ struct CompleteSubView: View {
     @State var isDisabled = false
     
     var completedBook: [Book] {
-        Book.booksData.filter { $0.status == "completed" }
+        books.filter { $0.status == "completed" }
     }
     var array = Array(1...6)
     var body: some View {
