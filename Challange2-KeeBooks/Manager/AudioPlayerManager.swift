@@ -87,12 +87,14 @@ final class AudioPlayerManager: NSObject, ObservableObject {
             object: player?.currentItem
         )
 
+        book.status = "ongoing"
+
         setupTimeObserver()
 
         // Resume or restart
         let startTime: Double
 
-        if book.status == "completed" {
+        if book.bookmark == nil || book.bookmark == 0 {
 
             startTime = 0
 
