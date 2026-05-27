@@ -32,7 +32,7 @@ struct OnGoingSubView: View {
             }
             
             if !ongoingBooks.isEmpty {
-                ForEach(allBooks.filter { $0.status == "ongoing"}.prefix(3)) { book in
+                ForEach(ongoingBooks.prefix(3)) { book in
                     NavigationLink(destination: DetailView(book: book)) {
                         HorizontalCard(book: book)
                     }
@@ -44,6 +44,12 @@ struct OnGoingSubView: View {
             
 
             
+        }
+        .onAppear {
+            isDisabled = ongoingBooks.isEmpty
+        }
+        .onChange(of: ongoingBooks) {
+            isDisabled = ongoingBooks.isEmpty
         }
         .navigationDestination(isPresented: $chevron) {
             OnGoingView(title: "On Going", isOnGoingPage: true)

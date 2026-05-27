@@ -376,9 +376,9 @@ final class SleepManager: ObservableObject {
                     
                     
                     let sleeping =
-                    self.lowMovementCount >= 30 &&
+                    self.lowMovementCount >= 120 &&
                     self.isSleepTime() &&
-                    bpm <= (restingHeartRate * 0.85)
+                    bpm <= (restingHeartRate + 5)
                     
                     if sleeping {
                         

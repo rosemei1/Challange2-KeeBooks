@@ -54,6 +54,7 @@ struct ContentView: View {
                     
                     await NotificationManager.shared
                         .requestPermission()
+                    sleepManager.requestAuthorization()
                 }
                 
             }
