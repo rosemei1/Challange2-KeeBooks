@@ -103,6 +103,9 @@ final class AudioPlayerManager: NSObject, ObservableObject {
             startTime = book.bookmark ?? 0
         }
 
+        currentTime = startTime
+        duration = book.duration
+
         let seekTime = CMTime(
             seconds: startTime,
             preferredTimescale: 600
