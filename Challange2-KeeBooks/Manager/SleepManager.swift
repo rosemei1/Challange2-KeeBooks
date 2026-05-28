@@ -360,7 +360,7 @@ final class SleepManager: ObservableObject {
 
             } else {
 
-                self.lowMovementCount = 0
+                self.lowMovementCount = max(0, self.lowMovementCount - 10)
             }
             
 //            self.fetchRestingBPM { restingHeartRate in
@@ -424,13 +424,13 @@ final class SleepManager: ObservableObject {
                     """
                     User Awake
                     
-                    HR: \(Int(bpm)) = \(bpm <= restingHeartRate * 0.85)
+                    HR: \(Int(bpm)) = \(bpm <= restingHeartRate + 5)
                     Resting Heart Rate: \(restingHeartRate)
-                    Sleeping Heart Rate: \(restingHeartRate * 0.85)
+                    Sleeping Heart Rate: \(restingHeartRate + 5)
 
 
                     Still Count:
-                    \(self.lowMovementCount) = \(self.lowMovementCount >= 30)
+                    \(self.lowMovementCount) = \(self.lowMovementCount >= 120)
                     
                     SleepTime:
                     \(self.formattedSleepTime) = \(self.isSleepTime())

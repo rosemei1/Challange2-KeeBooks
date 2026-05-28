@@ -18,22 +18,22 @@ struct ContentView: View {
             OnboardingView()
         } else {
             Group {
-                Text(sleepManager.sleepText)
-
-                Button("Start Sleep Detection") {
-                    sleepManager.requestAuthorization()
-                }
-
-                Button("Check Latest Sleep Stage") {
-                    sleepManager.fetchLatestSleepStage()
-                }
-
-                Button("Simulate Tonight's Pick") {
-                    if let book = pickedBook {
-                        AudioPlayerManager.shared.play(book: book)
-                        showSimulationPlayer = true
-                    }
-                }
+//                Text(sleepManager.sleepText)
+//
+//                Button("Start Sleep Detection") {
+//                    sleepManager.requestAuthorization()
+//                }
+//
+//                Button("Check Latest Sleep Stage") {
+//                    sleepManager.fetchLatestSleepStage()
+//                }
+//
+//                Button("Simulate Tonight's Pick") {
+//                    if let book = pickedBook {
+//                        AudioPlayerManager.shared.play(book: book)
+//                        showSimulationPlayer = true
+//                    }
+//                }
                 
                 TabView {
                     
